@@ -1,0 +1,24 @@
+<svg width="120" height="168" viewBox="0 0 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="168" rx="8" fill="url(#gradSecondChance)"/>
+  <rect x="3" y="3" width="114" height="162" rx="6" stroke="#fbbf24" stroke-width="4" fill="none"/>
+
+  <!-- Lucky clover / life icon -->
+  <circle cx="50" cy="70" r="10" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="70" cy="70" r="10" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="60" cy="60" r="10" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="60" cy="80" r="10" fill="#fbbf24" opacity="0.6"/>
+
+  <circle cx="60" cy="70" r="8" fill="#fbbf24"/>
+
+  <text x="60" y="115" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fbbf24" text-anchor="middle">SECOND</text>
+  <text x="60" y="132" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fbbf24" text-anchor="middle">CHANCE</text>
+  <text x="15" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fbbf24">SC</text>
+  <text x="105" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fbbf24" transform="rotate(180 105 155)">SC</text>
+
+  <defs>
+    <linearGradient id="gradSecondChance" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#713f12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#422006;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

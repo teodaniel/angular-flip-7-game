@@ -1,0 +1,15 @@
+<svg width="120" height="168" viewBox="0 0 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="168" rx="8" fill="url(#gradPlus4)"/>
+  <rect x="3" y="3" width="114" height="162" rx="6" stroke="#22d3ee" stroke-width="3" fill="none"/>
+  <text x="60" y="95" font-family="Arial, sans-serif" font-size="55" font-weight="bold" fill="#22d3ee" text-anchor="middle">+4</text>
+  <text x="15" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#22d3ee">+4</text>
+  <text x="105" y="155" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#22d3ee" transform="rotate(180 105 155)">+4</text>
+  <circle cx="60" cy="40" r="6" fill="#22d3ee" opacity="0.4"/>
+  <circle cx="60" cy="128" r="6" fill="#22d3ee" opacity="0.4"/>
+  <defs>
+    <linearGradient id="gradPlus4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

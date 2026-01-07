@@ -1,0 +1,20 @@
+<svg width="120" height="168" viewBox="0 0 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="168" rx="8" fill="url(#gradFreeze)"/>
+  <rect x="3" y="3" width="114" height="162" rx="6" stroke="#60a5fa" stroke-width="3" fill="none"/>
+
+  <!-- Snowflake icon -->
+  <path d="M60 50 L60 118" stroke="#60a5fa" stroke-width="4" stroke-linecap="round"/>
+  <path d="M40 70 L80 98" stroke="#60a5fa" stroke-width="4" stroke-linecap="round"/>
+  <path d="M40 98 L80 70" stroke="#60a5fa" stroke-width="4" stroke-linecap="round"/>
+
+  <text x="60" y="140" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#60a5fa" text-anchor="middle">FREEZE</text>
+  <text x="15" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#60a5fa">FRZ</text>
+  <text x="105" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#60a5fa" transform="rotate(180 105 155)">FRZ</text>
+
+  <defs>
+    <linearGradient id="gradFreeze" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c4a6e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#082f49;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

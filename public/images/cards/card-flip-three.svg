@@ -1,0 +1,21 @@
+<svg width="120" height="168" viewBox="0 0 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="168" rx="8" fill="url(#gradFlipThree)"/>
+  <rect x="3" y="3" width="114" height="162" rx="6" stroke="#c084fc" stroke-width="3" fill="none"/>
+
+  <!-- Three stacked cards icon -->
+  <rect x="35" y="50" width="30" height="42" rx="3" fill="none" stroke="#c084fc" stroke-width="2"/>
+  <rect x="45" y="60" width="30" height="42" rx="3" fill="none" stroke="#c084fc" stroke-width="2"/>
+  <rect x="55" y="70" width="30" height="42" rx="3" fill="none" stroke="#c084fc" stroke-width="2"/>
+
+  <text x="60" y="135" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#c084fc" text-anchor="middle">FLIP</text>
+  <text x="60" y="151" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#c084fc" text-anchor="middle">THREE</text>
+  <text x="15" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c084fc">F3</text>
+  <text x="105" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c084fc" transform="rotate(180 105 155)">F3</text>
+
+  <defs>
+    <linearGradient id="gradFlipThree" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#581c87;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b0764;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
