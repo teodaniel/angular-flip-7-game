@@ -53,8 +53,10 @@ export class App {
 
   // Notification popup states
   protected readonly showBustPopup = signal(false);
+  protected readonly showFreezePopup = signal(false);
+  protected readonly showBonusPopup = signal(false);
+  protected readonly showDeckEmptyPopup = signal(false);
   protected readonly showNextPlayerPopup = signal(false);
-  protected readonly bustCardValue = signal('');
 
   protected get currentPlayer(): Player {
     return this.players()[this.currentPlayerIndex()];
@@ -65,10 +67,11 @@ export class App {
   }
 
   protected get canDrawCard(): boolean {
+    const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
     return (
       this.isTurnActive() &&
       !this.hasBusted() &&
-      this.drawnCards().length < this.maxHandSize &&
+      numberCardCount < this.maxHandSize &&
       this.deckCount() > 0
     );
   }
@@ -86,29 +89,38 @@ export class App {
   }
 
   protected drawCard(): void {
+    // If deck is empty (count is 0), prevent drawing
+    if (this.deckCount() === 0) {
+      return;
+    }
+
     if (!this.canDrawCard) {
       return;
     }
 
     let card = this.cardDeckService.drawCard();
+    this.deckCount.set(this.cardDeckService.getRemainingCount());
 
-    // If deck is empty, reshuffle discard pile
-    if (!card && this.discardPile().length > 0) {
+    // If deck just became empty after drawing, trigger reshuffle
+    if (this.deckCount() === 0 && this.discardPile().length > 0) {
       console.log('Deck empty! Reshuffling discard pile...');
-      this.cardDeckService.setDeck(this.discardPile());
-      this.discardPile.set([]);
-      this.deckCount.set(this.cardDeckService.getRemainingCount());
 
-      // Try drawing again
-      card = this.cardDeckService.drawCard();
+      // Show the deck empty popup
+      this.showDeckEmptyPopup.set(true);
+
+      // Wait 1.5 seconds, then reshuffle
+      setTimeout(() => {
+        this.cardDeckService.setDeck(this.discardPile());
+        this.discardPile.set([]);
+        this.deckCount.set(this.cardDeckService.getRemainingCount());
+        this.showDeckEmptyPopup.set(false);
+      }, 1500);
     }
 
     if (!card) {
-      console.log('No more cards available - deck and discard pile are empty');
+      console.log('No more cards available');
       return;
     }
-
-    this.deckCount.set(this.cardDeckService.getRemainingCount());
 
     // Check for bust before adding card
     if (this.gameLogic.checkBust(this.drawnCards(), card)) {
@@ -129,10 +141,9 @@ export class App {
         this.hasBusted.set(true);
         this.isTurnActive.set(false);
         this.currentRoundScore.set(0);
-        this.bustCardValue.set(card.displayValue);
 
-        // Show bust popup
-        this.showBustNotification();
+        // Show bust notification and next player popup
+        this.showTurnEndNotification(CardType.NUMBER);
         console.log('BUST! You drew a duplicate number card.');
         return;
       }
@@ -150,6 +161,8 @@ export class App {
     if (card.type === CardType.FREEZE) {
       console.log('FREEZE card drawn! Turn ends.');
       this.isTurnActive.set(false);
+      this.showTurnEndNotification(CardType.FREEZE);
+      return;
     } else if (card.type === CardType.FLIP_THREE && !this.isFlippingThree()) {
       console.log('FLIP THREE activated! Auto-drawing 3 cards...');
       this.isFlippingThree.set(true);
@@ -157,29 +170,47 @@ export class App {
       this.autoFlipThree();
     }
 
-    // Check if hand limit reached
-    if (newCards.length >= this.maxHandSize) {
-      console.log('Hand limit reached! Turn ends.');
+    // Check if 7 number cards reached (hand limit is for number cards only)
+    const numberCardCount = newCards.filter((c) => c.type === CardType.NUMBER).length;
+    if (numberCardCount >= this.maxHandSize) {
+      console.log('7 number cards reached! 15 point bonus awarded. Turn ends.');
       this.isTurnActive.set(false);
+      this.showBonusPopup.set(true);
+
+      // Hide bonus popup after 2 seconds, show next player popup, then end turn
+      setTimeout(() => {
+        this.showBonusPopup.set(false);
+
+        // Show next player popup
+        this.showNextPlayerPopup.set(true);
+
+        // Hide next player popup after 2 seconds and end turn
+        setTimeout(() => {
+          this.showNextPlayerPopup.set(false);
+          this.endTurn();
+        }, 2000);
+      }, 2000);
     }
   }
 
   private autoFlipThree(): void {
+    const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
     if (
       this.flipThreeCount() < 3 &&
       this.canDrawCard &&
       !this.hasBusted() &&
-      this.drawnCards().length < this.maxHandSize
+      numberCardCount < this.maxHandSize
     ) {
       this.flipThreeCount.set(this.flipThreeCount() + 1);
       this.drawCard();
 
       // Continue flipping if conditions met
+      const updatedNumberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
       if (
         this.flipThreeCount() < 3 &&
         this.canDrawCard &&
         !this.hasBusted() &&
-        this.drawnCards().length < this.maxHandSize
+        updatedNumberCardCount < this.maxHandSize
       ) {
         setTimeout(() => this.autoFlipThree(), 300);
       } else {
@@ -344,16 +375,59 @@ export class App {
     return proximity;
   }
 
-  private showBustNotification(): void {
-    this.showBustPopup.set(true);
+  // Calculate cards per row based on viewport width
+  protected getCardsPerRow(): number {
+    const width = window.innerWidth;
+    if (width >= 1400) return 25;
+    if (width >= 1200) return 20;
+    if (width >= 992) return 16;
+    if (width >= 768) return 12;
+    if (width >= 480) return 8;
+    return 6;
+  }
 
-    // Hide bust popup after 2 seconds and show next player popup
+  // Calculate row index for a card
+  protected getRowIndex(cardIndex: number): number {
+    return Math.floor(cardIndex / this.getCardsPerRow());
+  }
+
+  // Calculate position within row for a card
+  protected getPositionInRow(cardIndex: number): number {
+    return cardIndex % this.getCardsPerRow();
+  }
+
+  // Calculate number of cards in a specific row
+  protected getCardsInRow(rowIndex: number, totalCards: number): number {
+    const cardsPerRow = this.getCardsPerRow();
+    const startIndex = rowIndex * cardsPerRow;
+    return Math.min(cardsPerRow, totalCards - startIndex);
+  }
+
+  // Get total number of rows
+  protected getTotalRows(): number {
+    return Math.ceil(this.discardPile().length / this.getCardsPerRow());
+  }
+
+
+  private showTurnEndNotification(cardType: CardType): void {
+    // Map card types to their corresponding popup signals
+    const popupSignalMap = new Map([
+      [CardType.NUMBER, this.showBustPopup],
+      [CardType.FREEZE, this.showFreezePopup],
+    ]);
+
+    const popupSignal = popupSignalMap.get(cardType);
+    if (!popupSignal) {
+      console.warn(`Unexpected card type for turn end notification: ${cardType}`);
+      return;
+    }
+
+    // Show the popup
+    popupSignal.set(true);
+
+    // Hide the popup after 2 seconds and show next player popup
     setTimeout(() => {
-      this.showBustPopup.set(false);
-
-      // Determine next player
-      const nextPlayerIndex = (this.currentPlayerIndex() + 1) % this.players().length;
-      const nextPlayer = this.players()[nextPlayerIndex];
+      popupSignal.set(false);
 
       // Show next player popup
       this.showNextPlayerPopup.set(true);
