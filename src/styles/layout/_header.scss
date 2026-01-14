@@ -1,0 +1,53 @@
+// ============================================
+// LAYOUT - HEADER
+// ============================================
+
+@use '../abstracts/variables' as vars;
+
+header {
+  background: vars.$color-pale-white;
+  border: vars.$border-thin solid vars.$color-pale-blue;
+  border-width: vars.$border-thin;
+  box-shadow: 0 0 0 vars.$border-medium vars.$color-pale-white,
+    0 0 0 vars.$border-ultra-thick vars.$color-dark-blue, vars.$shadow-header;
+  color: vars.$color-navy;
+  padding: vars.$spacing-md;
+  text-align: center;
+  position: relative;
+
+  h1 {
+    margin: 0;
+    font-size: 3.5rem;
+    font-family: vars.$font-retro;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: vars.$color-yellow;
+
+    /* Multi-layer stroke effect simulating SVG tspan */
+    -webkit-text-stroke: vars.$border-thin vars.$color-dark-blue;
+    paint-order: stroke fill;
+
+    /* Stacked text shadows for depth */
+    text-shadow:
+      /* Dark blue strokes (simulating additional stroke layers) */ 0 0 4px vars.$color-dark-blue,
+      0 0 6px vars.$color-dark-blue,
+      /* Dark red middle stroke layer */ 0 0 10px vars.$color-dark-red,
+      0 0 12px vars.$color-dark-red,
+      0 0 14px vars.$color-dark-red,
+      /* Outer dark blue stroke */ 0 0 18px vars.$color-dark-blue,
+      0 0 20px vars.$color-dark-blue,
+      /* Depth shadows below */ 2px 2px 0px vars.$color-dark-blue,
+      3px 3px 0px vars.$color-dark-blue,
+      4px 4px 0px vars.$color-dark-blue,
+      5px 5px 0px vars.$color-dark-blue,
+      6px 6px 2px rgba(vars.$color-dark-blue, 0.5);
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+}

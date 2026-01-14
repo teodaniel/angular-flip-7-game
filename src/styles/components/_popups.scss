@@ -1,0 +1,141 @@
+// ============================================
+// COMPONENTS - NOTIFICATION POPUPS
+// ============================================
+
+@use '../abstracts/variables' as vars;
+@use '../abstracts/mixins' as mixins;
+
+// Base notification popup styles
+.notification-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  text-align: center;
+  animation: fadeInOut 2s ease-in-out;
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 4rem;
+    @include mixins.retro-text(vars.$color-white, vars.$color-navy, vars.$border-thick);
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.5rem;
+    color: vars.$color-slate;
+    font-weight: 500;
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    h2 {
+      font-size: 3rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Bust Popup
+.bust-popup {
+  background: linear-gradient(135deg, vars.$color-bust-red 0%, vars.$color-bust-red-dark 100%);
+  border-color: vars.$color-yellow;
+
+  h2 {
+    @include mixins.retro-text(vars.$color-yellow, vars.$color-purple, vars.$border-extra-thick);
+  }
+
+  p {
+    color: white;
+  }
+}
+
+// Freeze Popup
+.freeze-popup {
+  background: linear-gradient(135deg, vars.$color-freeze-blue 0%, vars.$color-freeze-blue-dark 100%);
+  border-color: vars.$color-cyan;
+
+  h2 {
+    @include mixins.retro-text(#ffffff, #00a8cc, 4px);
+  }
+
+  p {
+    color: white;
+  }
+}
+
+// Bonus Popup
+.bonus-popup {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  border-color: #ff006e;
+
+  h2 {
+    font-family: sans-serif;
+    color: #ffd700;
+    -webkit-text-stroke: 3px #ff0000;
+    filter: drop-shadow(4px 4px 0px #00008b) drop-shadow(5px 5px 0px #00008b);
+    font-size: 4rem;
+    margin: 0;
+  }
+}
+
+// Deck Empty Popup
+.deck-empty-popup {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  border-color: #00d4ff;
+
+  h2 {
+    @include mixins.retro-text(vars.$color-white, vars.$color-navy, vars.$border-thick);
+  }
+
+  p {
+    color: white;
+  }
+}
+
+// Next Player Popup
+.next-player-popup {
+  background: linear-gradient(135deg, #ff006e 0%, #ff6b00 100%);
+  border-color: #ffee00;
+
+  p {
+    @include mixins.retro-text(#ffee00, #8b00ff, 3px);
+    font-size: 2rem;
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    p {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Animation keyframes
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}

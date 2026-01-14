@@ -1,0 +1,69 @@
+// ============================================
+// LAYOUT - DECK SECTION
+// Main gameplay area with deck, discard pile, and end turn button
+// ============================================
+
+@use '../abstracts/variables' as vars;
+
+.deck-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: vars.$spacing-lg;
+  position: relative;
+  gap: vars.$spacing-2xl;
+
+  // Discard Pile
+  .discard-pile {
+    position: relative;
+    cursor: pointer;
+    transition: transform vars.$transition-fast;
+
+    &:hover {
+      transform: translateY(-5px);
+
+      .discard-top-card,
+      .discard-empty {
+        filter: vars.$shadow-hover-dark-blue;
+        transition: filter vars.$transition-medium;
+      }
+    }
+  }
+
+  // Main Deck
+  .deck {
+    position: relative;
+    cursor: pointer;
+    transition: transform vars.$transition-fast;
+
+    &:hover:not(.deck-empty) {
+      transform: translateY(-10px);
+
+      .card-back {
+        filter: vars.$shadow-hover-dark-blue;
+        transition: filter vars.$transition-medium;
+      }
+    }
+
+    &:active:not(.deck-empty) {
+      transform: translateY(-5px);
+    }
+
+    &.deck-empty {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    flex-direction: column;
+    gap: 2rem;
+
+    .discard-pile,
+    .deck {
+      margin-bottom: 0;
+    }
+  }
+}

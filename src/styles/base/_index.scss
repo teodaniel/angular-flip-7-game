@@ -1,6 +1,6 @@
 // ============================================
-// APP COMPONENT STYLES
-// Import modular 7-1 pattern architecture
+// BASE INDEX
+// Forward all base styles
 // ============================================
 
-@use '../styles/main.scss';
+@forward 'reset';

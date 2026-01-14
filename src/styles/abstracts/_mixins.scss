@@ -1,0 +1,27 @@
+// ============================================
+// MIXINS
+// ============================================
+
+@use 'variables' as vars;
+
+// Retro Text Mixin - Bold Outlined Typography
+@mixin retro-text(
+  $fill-color,
+  $outline-color,
+  $outline-width: vars.$border-thick,
+  $shadow: true
+) {
+  color: $fill-color;
+  -webkit-text-stroke: $outline-width $outline-color;
+  text-stroke: $outline-width $outline-color;
+  paint-order: stroke fill;
+  font-weight: 900;
+  font-family: vars.$font-retro;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  @if $shadow {
+    filter: drop-shadow(3px 3px 0px rgba(vars.$color-black, 0.4))
+      drop-shadow(4px 4px 0px rgba(vars.$color-black, 0.2));
+  }
+}
