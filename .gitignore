@@ -45,3 +45,6 @@ nul
 
 # Claude IDE settings
 .claude/settings.local.json
+
+# Temporary assets
+src/assets/images/flip-7-1197249135_506x700.png
