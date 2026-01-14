@@ -67,6 +67,29 @@
 </div>
 }
 
+<!-- Freeze Notification Popup -->
+@if (showFreezePopup()) {
+<div class="notification-popup freeze-popup">
+  <h2>FROZEN!</h2>
+  <p>You got Frozen! Better luck next time.</p>
+</div>
+}
+
+<!-- Bonus Notification Popup -->
+@if (showBonusPopup()) {
+<div class="notification-popup bonus-popup">
+  <h2>15 POINT BONUS!</h2>
+</div>
+}
+
+<!-- Deck Empty Notification Popup -->
+@if (showDeckEmptyPopup()) {
+<div class="notification-popup deck-empty-popup">
+  <h2>DECK EMPTY</h2>
+  <p>Reshuffling...</p>
+</div>
+}
+
 <!-- Next Player Notification Popup -->
 @if (showNextPlayerPopup()) {
 <div class="notification-popup next-player-popup">
@@ -103,7 +126,7 @@
 
   <!-- Central Section: Card Deck -->
   <section class="deck-section">
-    <!-- Discard Pile (Bottom Left) -->
+    <!-- Discard Pile -->
     <div class="discard-pile" (click)="toggleDiscardOverlay()">
       @if (discardPile().length === 0) {
       <img src="images/discard-placeholder.svg" alt="Empty discard pile" class="discard-empty" />
@@ -117,30 +140,35 @@
       <div class="discard-label">DISCARD PILE</div>
     </div>
 
-    <!-- Main Deck (Center) -->
-    <div class="deck" (click)="drawCard()">
-      <div class="hit-me-text">HIT ME!</div>
+    <!-- Main Deck -->
+    <div class="deck" [class.deck-empty]="deckCount() === 0" (click)="drawCard()">
+      @if (deckCount() > 0) {
       <img src="images/card-back.svg" alt="Card deck" class="card-back" />
-      <div class="deck-label">Click to Draw</div>
+      } @else {
+      <img src="images/empty-slot.svg" alt="Empty deck" class="card-back" />
+      }
+      <div class="deck-label">{{ deckCount() > 0 ? 'Click to Draw' : 'Empty' }}</div>
     </div>
 
-    <!-- End Turn Button (Bottom Right) -->
+    <!-- End Turn Button -->
     <button
       class="end-turn-btn"
       (click)="endTurn()"
       [disabled]="!isTurnActive() || drawnCards().length === 0"
     >
-      <div class="btn-content">
-        <div class="stay-text">STAY</div>
-        END TURN
-      </div>
+      <div class="btn-content">END TURN</div>
     </button>
   </section>
 
   <!-- Discard Pile Overlay -->
   @if (showDiscardOverlay()) {
   <div class="discard-overlay" (click)="closeDiscardOverlay($event)">
-    <div class="fanned-cards">
+    <div
+      class="fanned-cards"
+      [style.--total-cards]="discardPile().length"
+      [style.--total-rows]="getTotalRows()"
+      [style.--cards-per-row]="getCardsPerRow()"
+    >
       @for (card of discardPile(); track card.id; let i = $index) {
       <div
         [id]="'card-' + card.id"
@@ -148,6 +176,9 @@
         class="fanned-card"
         [style.--card-index]="i"
         [style.--total-cards]="discardPile().length"
+        [style.--row-index]="getRowIndex(i)"
+        [style.--position-in-row]="getPositionInRow(i)"
+        [style.--cards-in-row]="getCardsInRow(getRowIndex(i), discardPile().length)"
         [style.--proximity]="mousePosition() && getCardProximity(cardElement)"
       >
         <img [src]="card.imageUrl" [alt]="card.displayValue" />
