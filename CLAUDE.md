@@ -105,8 +105,12 @@ The application includes Server-Side Rendering (SSR) support. The project uses:
 
 **Empty deck handling:**
 
-- When the draw deck runs out, the discard pile is shuffled to create a new draw deck
+- When the draw deck runs out, a "DECK EMPTY" popup appears with "Reshuffling..." message
+- The discard pile is automatically shuffled to create a new draw deck
+- Visual feedback: deck shows empty-slot.svg placeholder when empty with reduced opacity
+- Empty deck has disabled interaction (cursor: not-allowed)
 - Discard pile contains all cards from successfully completed turns
+- Reshuffle happens after 1.5 second delay with popup notification
 
 ## Development Commands
 
@@ -160,9 +164,12 @@ The game is built as a single-component application with service-based business 
 
 - Manages all game state using Angular signals
 - Orchestrates game flow (draw, bust detection, turn progression)
-- Signal state includes: players, currentPlayerIndex, currentRoundScore, drawnCards, discardPile, deckCount, isTurnActive, hasBusted, isFlippingThree
-- Key methods: `drawCard()`, `autoFlipThree()`, `endTurn()`
-- Computed properties: `currentPlayer`, `sortedPlayers`, `canDrawCard`
+- Signal state includes: players, currentPlayerIndex, currentRoundScore, drawnCards, discardPile, deckCount, isTurnActive, hasBusted, isFlippingThree, showStartModal, showEndModal, showDiscardOverlay, showBustPopup, showFreezePopup, showBonusPopup, showDeckEmptyPopup, showNextPlayerPopup, mousePosition
+- Key methods: `drawCard()`, `autoFlipThree()`, `endTurn()`, `toggleDiscardOverlay()`, `getCardProximity()`, `showTurnEndNotification()`
+- Computed properties: `currentPlayer`, `sortedPlayers`, `canDrawCard`, `canStartGame`
+- Hand limit: 7-card limit applies to NUMBER cards only (special cards don't count toward limit)
+- Mouse tracking: Proximity-based hover animation for fanned cards in discard overlay (listener added/removed dynamically)
+- Turn-end notifications: Map-based system handles both BUST and FREEZE cards with sequential popup animations
 
 **Data Models:** [src/app/models/card.model.ts](src/app/models/card.model.ts)
 
@@ -196,8 +203,8 @@ The game is built as a single-component application with service-based business 
 - **Config**: [src/app/app.config.ts](src/app/app.config.ts) - Browser configuration with client hydration and global error listeners
 - **Server config**: [src/app/app.config.server.ts](src/app/app.config.server.ts) - Server-specific configuration
 - **Routing**: [src/app/app.routes.ts](src/app/app.routes.ts) - Currently empty (single-page app)
-- **Template**: [src/app/app.html](src/app/app.html) - Game UI with header, player info, deck, and drawn cards sections
-- **Styles**: [src/app/app.scss](src/app/app.scss) - Comprehensive SCSS with purple-violet gradient theme, responsive design (768px breakpoint)
+- **Template**: [src/app/app.html](src/app/app.html) - Game UI with header, player info, deck, drawn cards sections, and notification popups (BUST, FREEZE, BONUS, DECK EMPTY, NEXT PLAYER)
+- **Styles**: [src/app/app.scss](src/app/app.scss) - Imports modular 7-1 pattern architecture from [src/styles/main.scss](src/styles/main.scss)
 
 ### Key Patterns
 - **Standalone components**: All components use `imports` array instead of NgModules
@@ -226,6 +233,89 @@ The SSR server ([src/server.ts](src/server.ts)):
 - Can be extended with REST API endpoints (see comments in server.ts)
 - Supports PM2 for process management
 
+### UI Features
+
+**Modals:**
+- Start screen modal with player management (add/remove/rename players, 3-18 player validation)
+- End game modal showing winner and final score
+- Notification popups for turn-end events and player transitions (sequential animations with 2s timeouts)
+  - BUST popup: Red gradient background, shown when duplicate number card is drawn
+  - FREEZE popup: Blue gradient background, shown when FREEZE card is drawn
+  - BONUS popup: Orange gradient background with 3D text effect (yellow text, red outline, dark blue drop shadow), shown when 7 number cards are reached
+  - DECK EMPTY popup: Gray gradient background, shown when deck is empty during reshuffle (1.5s duration)
+  - Next Player popup: Purple gradient background, announces next player after turn ends
+  - Automatic turn progression: First popup → Next Player popup → Turn ends automatically (except BONUS which doesn't trigger next player)
+
+**Interactive Elements:**
+- Discard pile overlay with fanned card display
+  - Proximity-based hover animation using mouse position tracking
+  - Multi-row layout when cards exceed viewport width
+  - Dynamic row calculations: `getRowIndex()`, `getPositionInRow()`, `getCardsInRow()`, `getTotalRows()`
+  - Cards lift and scale based on cursor distance (max 200px range)
+  - CSS custom properties: `--proximity`, `--row-index`, `--position-in-row`, `--cards-in-row`, `--total-rows`
+  - Mouse listeners added on overlay open, removed on close
+  - Responsive breakpoints: 1400px (25 cards/row), 1200px (20), 992px (16), 768px (12), 480px (8), default (6)
+- Deck interactions with hover effects (translateY(-10px) on hover, shadow filter transitions)
+- END TURN button positioned at bottom-right of deck section with 40px margin from right edge
+  - Absolute positioning on desktop, relative positioning on mobile
+  - 120px height with retro gradient styling
+
+**Styling & Color Palette:**
+
+- Retro 80s/90s aesthetic inspired by game box design
+- **SCSS Architecture**: Organized using **7-1 Pattern** with modular partials for maintainability and scalability
+  - **Master file**: [src/app/app.scss](src/app/app.scss) imports [src/styles/main.scss](src/styles/main.scss)
+  - **Abstracts** (`src/styles/abstracts/`):
+    - `_variables.scss` - All design tokens: 25+ colors, spacing scale, borders, shadows, card dimensions, transitions
+    - `_mixins.scss` - Retro text mixin for bold outlined typography
+    - `_index.scss` - Forwards all abstracts with preserved namespaces
+  - **Base** (`src/styles/base/`):
+    - `_reset.scss` - Global element styles (main container)
+    - `_index.scss` - Forwards all base styles
+  - **Components** (`src/styles/components/`):
+    - `_buttons.scss` - End turn, start, add, remove buttons
+    - `_cards.scss` - Card styling, animations, fanned cards
+    - `_modals.scss` - Start and end game modals
+    - `_popups.scss` - Notification popups (bust, freeze, bonus, etc.) with keyframes
+    - `_index.scss` - Forwards all components
+  - **Layout** (`src/styles/layout/`):
+    - `_header.scss` - Header with Flip 7 title
+    - `_top-section.scss` - Player info, round score, leaderboard
+    - `_deck-section.scss` - Main gameplay area
+    - `_drawn-cards.scss` - Bottom drawn cards section
+    - `_discard-overlay.scss` - Fullscreen discard pile overlay
+    - `_index.scss` - Forwards all layout styles
+  - **Themes** (`src/styles/themes/`):
+    - `_index.scss` - Future-proof for theme variations (empty)
+  - **Namespace strategy**: Explicit namespaces with `@use` (e.g., `@use 'abstracts' as abstracts;`)
+  - **Variables access**: Use explicit namespace (e.g., `vars.$color-dark-blue`, `mixins.retro-text()`)
+- **Design Tokens** (defined in `abstracts/_variables.scss`):
+  - Color palette: 25+ semantic color variables (e.g., `$color-dark-blue`, `$color-hot-pink`, `$color-crimson`)
+  - Spacing scale: `$spacing-xs` through `$spacing-2xl` (0.5rem to 6rem)
+  - Border system: `$border-thin` through `$border-ultra-thick` (2px to 8px)
+  - Border radius: `$border-radius-sm` through `$border-radius-2xl` (8px to 24px)
+  - Shadow presets: Standard shadows plus themed glows (`$shadow-glow-dark-blue`, `$shadow-hover-dark-blue`)
+  - Card dimensions: `$card-width-deck`, `$card-height-deck`, `$card-width-hand`, `$card-height-hand`
+  - Transitions: `$transition-fast`, `$transition-medium`, `$transition-slow`
+- **Background**: Radial gradient from outer cream to center pale white (defined in [src/styles.scss](src/styles.scss))
+- **Primary colors**: Dark blue (#1e3a5f), yellow (#ffee00), dark red (#8b0000)
+- **Header**: Pale white background with triple border system using box-shadow layering
+- **"FLIP 7" text**: Yellow with multi-layer text-shadow effect simulating SVG tspan strokes (dark blue → dark red → dark blue)
+- **Section borders**: Dark blue with white/translucent backgrounds
+- **Round score**: Dark red gradient background with yellow outlined score text
+- **Interactive hover effects**: Dark blue shadows with smooth 0.3s transitions, offset 4px right and 5px down
+- **Retro text mixin**: `@mixin retro-text()` in `abstracts/_mixins.scss` for bold outlined typography using `-webkit-text-stroke` and `paint-order`
+
+**Layout:**
+
+- Responsive design with 768px breakpoint
+- Mobile: Vertical stack layout (discard → deck → END TURN button)
+- Desktop: Horizontal layout with 6rem gap between elements
+
+**State Management:**
+- Discard pile shows first card (oldest) in array, not last
+- All cards move to discard pile after turn (including bust cards)
+
 ### Assets
 
 - **Card images**: 22 SVG files in `public/images/cards/`
@@ -234,8 +324,11 @@ The SSR server ([src/server.ts](src/server.ts)):
   - Multiplier: card-x2.svg
   - Special: card-freeze.svg, card-flip-three.svg, card-second-chance.svg
 - **Deck back**: public/images/card-back.svg
+- **Discard placeholder**: public/images/discard-placeholder.svg
+- **Empty deck slot**: public/images/empty-slot.svg (shown when deck is empty)
 - All cards use 150×210px deck size, 80×112px hand size (configured in app.scss)
 
 ## Bundle Budgets
+
 - Initial bundle: 500kB warning, 1MB error
 - Component styles: 4kB warning, 8kB error
