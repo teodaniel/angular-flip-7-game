@@ -19,11 +19,13 @@
   z-index: 1001;
   text-align: center;
   animation: fadeInOut 2s ease-in-out;
+  user-select: none;
 
   h2 {
     margin: 0 0 1rem 0;
     font-size: 4rem;
     @include mixins.retro-text(vars.$color-white, vars.$color-navy, vars.$border-thick);
+    user-select: none;
   }
 
   p {
@@ -31,6 +33,7 @@
     font-size: 1.5rem;
     color: vars.$color-slate;
     font-weight: 500;
+    user-select: none;
   }
 
   // Mobile responsive
@@ -117,6 +120,34 @@
     p {
       font-size: 1.5rem;
     }
+  }
+}
+
+// Second Chance Popup
+.second-chance-popup {
+  background: linear-gradient(135deg, #f47576 0%, #f14947 100%);
+  border-color: #00098d;
+
+  h2 {
+    @include mixins.retro-text(#fff8d4, #00098d, vars.$border-extra-thick);
+  }
+
+  p {
+    color: #fff8d4;
+  }
+}
+
+// Flip Three Popup
+.flip-three-popup {
+  background: linear-gradient(135deg, #f3f13a 0%, #fbbf24 100%);
+  border-color: #00098d;
+
+  h2 {
+    @include mixins.retro-text(#f68712, #00098d, vars.$border-extra-thick);
+  }
+
+  p {
+    color: #00098d;
   }
 }
 

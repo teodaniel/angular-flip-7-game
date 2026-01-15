@@ -97,6 +97,22 @@
 </div>
 }
 
+<!-- Second Chance Notification Popup -->
+@if (showSecondChancePopup()) {
+<div class="notification-popup second-chance-popup">
+  <h2>SECOND CHANCE!</h2>
+  <p>Bust prevented.</p>
+</div>
+}
+
+<!-- Flip Three Notification Popup -->
+@if (showFlipThreePopup()) {
+<div class="notification-popup flip-three-popup">
+  <h2>FLIP THREE ACTIVATED!</h2>
+  <p>Auto-drawing cards...</p>
+</div>
+}
+
 <header>
   <h1>Flip 7</h1>
 </header>
