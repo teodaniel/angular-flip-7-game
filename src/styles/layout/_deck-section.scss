@@ -37,6 +37,10 @@
     cursor: pointer;
     transition: transform vars.$transition-fast;
 
+    .card-back {
+      filter: vars.$shadow-dark-blue;
+    }
+
     &:hover:not(.deck-empty) {
       transform: translateY(-10px);
 
