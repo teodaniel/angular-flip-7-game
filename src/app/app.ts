@@ -57,6 +57,8 @@ export class App {
   protected readonly showBonusPopup = signal(false);
   protected readonly showDeckEmptyPopup = signal(false);
   protected readonly showNextPlayerPopup = signal(false);
+  protected readonly showSecondChancePopup = signal(false);
+  protected readonly showFlipThreePopup = signal(false);
 
   protected get currentPlayer(): Player {
     return this.players()[this.currentPlayerIndex()];
@@ -72,7 +74,8 @@ export class App {
       this.isTurnActive() &&
       !this.hasBusted() &&
       numberCardCount < this.maxHandSize &&
-      this.deckCount() > 0
+      this.deckCount() > 0 &&
+      !this.isFlippingThree()
     );
   }
 
@@ -103,8 +106,6 @@ export class App {
 
     // If deck just became empty after drawing, trigger reshuffle
     if (this.deckCount() === 0 && this.discardPile().length > 0) {
-      console.log('Deck empty! Reshuffling discard pile...');
-
       // Show the deck empty popup
       this.showDeckEmptyPopup.set(true);
 
@@ -118,7 +119,6 @@ export class App {
     }
 
     if (!card) {
-      console.log('No more cards available');
       return;
     }
 
@@ -132,7 +132,13 @@ export class App {
           card.id
         );
         this.drawnCards.set(updatedCards);
-        console.log('SECOND CHANCE used! Bust prevented.');
+
+        // Show second chance popup
+        this.showSecondChancePopup.set(true);
+        setTimeout(() => {
+          this.showSecondChancePopup.set(false);
+        }, 2000);
+
         return;
       } else {
         // Player busts - add the bust card to show it
@@ -144,7 +150,6 @@ export class App {
 
         // Show bust notification and next player popup
         this.showTurnEndNotification(CardType.NUMBER);
-        console.log('BUST! You drew a duplicate number card.');
         return;
       }
     }
@@ -159,78 +164,174 @@ export class App {
 
     // Handle special cards
     if (card.type === CardType.FREEZE) {
-      console.log('FREEZE card drawn! Turn ends.');
       this.isTurnActive.set(false);
       this.showTurnEndNotification(CardType.FREEZE);
       return;
     } else if (card.type === CardType.FLIP_THREE && !this.isFlippingThree()) {
-      console.log('FLIP THREE activated! Auto-drawing 3 cards...');
       this.isFlippingThree.set(true);
       this.flipThreeCount.set(0);
+
+      // Show flip three popup
+      this.showFlipThreePopup.set(true);
+      setTimeout(() => {
+        this.showFlipThreePopup.set(false);
+      }, 1500);
+
       this.autoFlipThree();
     }
 
     // Check if 7 number cards reached (hand limit is for number cards only)
     const numberCardCount = newCards.filter((c) => c.type === CardType.NUMBER).length;
     if (numberCardCount >= this.maxHandSize) {
-      console.log('7 number cards reached! 15 point bonus awarded. Turn ends.');
       this.isTurnActive.set(false);
       this.showBonusPopup.set(true);
 
-      // Hide bonus popup after 2 seconds, show next player popup, then end turn
+      // Hide bonus popup after 2 seconds, then show next player popup and end turn
       setTimeout(() => {
         this.showBonusPopup.set(false);
-
-        // Show next player popup
-        this.showNextPlayerPopup.set(true);
-
-        // Hide next player popup after 2 seconds and end turn
-        setTimeout(() => {
-          this.showNextPlayerPopup.set(false);
-          this.endTurn();
-        }, 2000);
+        this.showNextPlayerAndEndTurn();
       }, 2000);
     }
   }
 
-  private autoFlipThree(): void {
-    const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
-    if (
-      this.flipThreeCount() < 3 &&
-      this.canDrawCard &&
-      !this.hasBusted() &&
-      numberCardCount < this.maxHandSize
-    ) {
-      this.flipThreeCount.set(this.flipThreeCount() + 1);
-      this.drawCard();
+  private autoFlipThree(cardsToFlip: number = 3, baseDelay: number = 0): void {
+    // Auto-draw cards with 500ms delay between each (500ms, 1000ms, 1500ms, etc.)
+    for (let i = 0; i < cardsToFlip; i++) {
+      setTimeout(() => {
+        const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
 
-      // Continue flipping if conditions met
-      const updatedNumberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
-      if (
-        this.flipThreeCount() < 3 &&
-        this.canDrawCard &&
-        !this.hasBusted() &&
-        updatedNumberCardCount < this.maxHandSize
-      ) {
-        setTimeout(() => this.autoFlipThree(), 300);
-      } else {
-        this.isFlippingThree.set(false);
-        this.flipThreeCount.set(0);
-      }
-    } else {
-      this.isFlippingThree.set(false);
-      this.flipThreeCount.set(0);
+        // Check if we can still draw (excluding isFlippingThree check since we're already flipping)
+        if (this.isTurnActive() && !this.hasBusted() && numberCardCount < this.maxHandSize && this.deckCount() > 0) {
+          const card = this.cardDeckService.drawCard();
+          this.deckCount.set(this.cardDeckService.getRemainingCount());
+
+          // Handle deck reshuffle
+          if (this.deckCount() === 0 && this.discardPile().length > 0) {
+            this.showDeckEmptyPopup.set(true);
+            setTimeout(() => {
+              this.cardDeckService.setDeck(this.discardPile());
+              this.discardPile.set([]);
+              this.deckCount.set(this.cardDeckService.getRemainingCount());
+              this.showDeckEmptyPopup.set(false);
+            }, 1500);
+          }
+
+          if (!card) {
+            this.isFlippingThree.set(false);
+            this.flipThreeCount.set(0);
+            return;
+          }
+
+          // Check for bust
+          if (this.gameLogic.checkBust(this.drawnCards(), card)) {
+            if (this.gameLogic.hasSecondChance(this.drawnCards())) {
+              const updatedCards = this.gameLogic.removeSecondChanceAndBustCard(
+                this.drawnCards(),
+                card.id
+              );
+              this.drawnCards.set(updatedCards);
+              this.showSecondChancePopup.set(true);
+              setTimeout(() => {
+                this.showSecondChancePopup.set(false);
+              }, 2000);
+            } else {
+              const newCards = [...this.drawnCards(), card];
+              this.drawnCards.set(newCards);
+              this.hasBusted.set(true);
+              this.isTurnActive.set(false);
+              this.currentRoundScore.set(0);
+              this.isFlippingThree.set(false);
+              this.flipThreeCount.set(0);
+              this.showTurnEndNotification(CardType.NUMBER);
+              return;
+            }
+          } else {
+            // Add card to hand
+            const newCards = [...this.drawnCards(), card];
+            this.drawnCards.set(newCards);
+
+            // Calculate score
+            const score = this.gameLogic.calculateRoundScore(newCards);
+            this.currentRoundScore.set(score);
+
+            // Check if this card is also FLIP THREE - add 3 more iterations
+            if (card.type === CardType.FLIP_THREE) {
+              const currentIteration = i + 1;
+              const nextDelay = baseDelay + ((currentIteration + 1) * 500);
+
+              // Show flip three popup for nested FLIP THREE
+              this.showFlipThreePopup.set(true);
+              setTimeout(() => {
+                this.showFlipThreePopup.set(false);
+              }, 1500);
+
+              // Schedule 3 more cards after the current sequence
+              this.autoFlipThree(3, nextDelay);
+              return;
+            }
+
+            // Handle FREEZE card
+            if (card.type === CardType.FREEZE) {
+              this.isTurnActive.set(false);
+              this.isFlippingThree.set(false);
+              this.flipThreeCount.set(0);
+              this.showTurnEndNotification(CardType.FREEZE);
+              return;
+            }
+
+            // Check if 7 number cards reached
+            const updatedNumberCardCount = newCards.filter((c) => c.type === CardType.NUMBER).length;
+            if (updatedNumberCardCount >= this.maxHandSize) {
+              this.isTurnActive.set(false);
+              this.isFlippingThree.set(false);
+              this.flipThreeCount.set(0);
+              this.showBonusPopup.set(true);
+              setTimeout(() => {
+                this.showBonusPopup.set(false);
+                this.showNextPlayerAndEndTurn();
+              }, 2000);
+              return;
+            }
+          }
+
+          this.flipThreeCount.set(this.flipThreeCount() + 1);
+        } else {
+          // Stop flipping if conditions aren't met
+          this.isFlippingThree.set(false);
+          this.flipThreeCount.set(0);
+        }
+
+        // Reset flags after the last card attempt
+        if (i === cardsToFlip - 1) {
+          this.isFlippingThree.set(false);
+          this.flipThreeCount.set(0);
+        }
+      }, baseDelay + ((i + 1) * 500)); // Stagger each draw by 500ms (500ms, 1000ms, 1500ms)
     }
   }
 
   protected endTurn(): void {
+    this.isTurnActive.set(false);
+    this.showNextPlayerAndEndTurn();
+  }
+
+  private showNextPlayerAndEndTurn(): void {
+    // Show next player popup
+    this.showNextPlayerPopup.set(true);
+
+    // Hide next player popup after 2 seconds and finalize turn end
+    setTimeout(() => {
+      this.showNextPlayerPopup.set(false);
+      this.finalizeTurnEnd();
+    }, 2000);
+  }
+
+  private finalizeTurnEnd(): void {
     const finalScore = this.hasBusted() ? 0 : this.currentRoundScore();
 
     // Update player's total score
     const updatedPlayers = this.players().map((p, idx) =>
-      idx === this.currentPlayerIndex()
-        ? { ...p, totalScore: p.totalScore + finalScore }
-        : p
+      idx === this.currentPlayerIndex() ? { ...p, totalScore: p.totalScore + finalScore } : p
     );
     this.players.set(updatedPlayers);
 
@@ -256,11 +357,8 @@ export class App {
       );
       this.winner.set(winningPlayer);
       this.showEndModal.set(true);
-      console.log(`${winningPlayer.name} wins with ${winningPlayer.totalScore} points!`);
       return;
     }
-
-    console.log(`Turn ended. Next player: ${this.currentPlayer.name}`);
   }
 
   protected addPlayer(): void {
@@ -408,7 +506,6 @@ export class App {
     return Math.ceil(this.discardPile().length / this.getCardsPerRow());
   }
 
-
   private showTurnEndNotification(cardType: CardType): void {
     // Map card types to their corresponding popup signals
     const popupSignalMap = new Map([
@@ -425,18 +522,10 @@ export class App {
     // Show the popup
     popupSignal.set(true);
 
-    // Hide the popup after 2 seconds and show next player popup
+    // Hide the popup after 2 seconds, then show next player popup and end turn
     setTimeout(() => {
       popupSignal.set(false);
-
-      // Show next player popup
-      this.showNextPlayerPopup.set(true);
-
-      // Hide next player popup after 2 seconds and end turn
-      setTimeout(() => {
-        this.showNextPlayerPopup.set(false);
-        this.endTurn();
-      }, 2000);
+      this.showNextPlayerAndEndTurn();
     }, 2000);
   }
 }
