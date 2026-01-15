@@ -7,17 +7,77 @@
 main {
   padding: vars.$spacing-md;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 40px;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: none;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 100px);
+  background: radial-gradient(circle, vars.$color-paler-yellow, vars.$color-pale-yellow);
 }
 
-*, *:before, *:after{
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
-html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video{
+html,
+body,
+div,
+span,
+object,
+iframe,
+figure,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+code,
+em,
+img,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+b,
+u,
+i,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+canvas,
+embed,
+footer,
+header,
+nav,
+section,
+video {
   margin: 0;
   padding: 0;
   border: 0;
@@ -29,33 +89,41 @@ html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockq
   text-size-adjust: none;
 }
 
-footer, header, nav, section{
+footer,
+header,
+nav,
+section {
   display: block;
 }
 
-body{
+body {
   line-height: 1;
 }
 
-ol, ul{
+ol,
+ul {
   list-style: none;
 }
 
-blockquote, q{
+blockquote,
+q {
   quotes: none;
 }
 
-blockquote:before, blockquote:after, q:before, q:after{
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
   content: '';
   content: none;
 }
 
-table{
+table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-input{
+input {
   -webkit-appearance: none;
   border-radius: 0;
 }

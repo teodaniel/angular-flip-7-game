@@ -11,6 +11,8 @@ $color-pale-blue: #5a7fa0;
 $color-very-dark-blue: #0d1b2a;
 $color-navy: #1a1a2e;
 $color-yellow: #ffee00;
+$color-pale-yellow: #f0e7c3;
+$color-paler-yellow: #f8f4e0;
 $color-dark-red: #8b0000;
 $color-crimson: #c41e3a;
 $color-hot-pink: #ff006e;
@@ -68,7 +70,8 @@ $shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.3);
 $shadow-header: 0 4px 12px rgba(0, 0, 0, 0.15);
 $shadow-glow-dark-blue: 0 0 30px rgba(30, 58, 95, 0.2);
 $shadow-glow-crimson: 0 0 20px rgba(196, 30, 58, 0.5);
-$shadow-glow-hot-pink: 0 0 30px rgba(255, 0, 110, 0.5);
+$shadow-dark-blue: drop-shadow(1px 2px 5px rgba(13, 27, 42, 0.38))
+  drop-shadow(1px 2px 5px rgba(13, 27, 42, 0.6));
 $shadow-hover-dark-blue: drop-shadow(4px 5px 15px rgba(13, 27, 42, 0.38))
   drop-shadow(4px 5px 25px rgba(13, 27, 42, 0.6));
 
