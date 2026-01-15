@@ -21,6 +21,8 @@
   box-shadow: 0 4px 12px rgba(vars.$color-black, 0.2);
 
   img {
+    width: vars.$card-width-deck;
+    height: vars.$card-height-deck;
     border-radius: vars.$border-radius-sm - 2px;
   }
 }
@@ -31,6 +33,7 @@
   height: vars.$card-height-deck;
   filter: vars.$shadow-xl;
   transition: filter vars.$transition-medium;
+  border-radius: 5%;
 }
 
 // Discard pile cards
@@ -40,6 +43,7 @@
   height: vars.$card-height-deck;
   filter: vars.$shadow-xl;
   transition: filter vars.$transition-medium;
+  border-radius: 5%;
 }
 
 // Card labels
@@ -97,12 +101,9 @@
   // Transform for multi-row fanned layout
   transform:
     // Center horizontally
-    translateX(-50%)
-    // Horizontal spread within row (centered around middle of row)
+    translateX(-50%) // Horizontal spread within row (centered around middle of row)
     translateX(
-      calc(
-        (var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * #{$baseSpacing}
-      )
+      calc((var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * #{$baseSpacing})
     )
     // Vertical position based on row index
     translateY(calc(var(--row-index, 0) * (#{$rowHeight} + #{$rowGap}) + 50px))
@@ -114,12 +115,13 @@
       )
     )
     // Proximity-based hover effects
-    translateY(calc(var(--proximity, 0) * -30px))
-    scale(calc(1 + var(--proximity, 0) * 0.12));
+    translateY(calc(var(--proximity, 0) * -30px)) scale(calc(1 + var(--proximity, 0) * 0.12));
 
   // Increase z-index when proximity is high (for hover to appear on top)
   &[style*='--proximity'] {
-    z-index: calc(var(--row-index, 0) * 100 + var(--position-in-row, 0) + var(--proximity, 0) * 1000);
+    z-index: calc(
+      var(--row-index, 0) * 100 + var(--position-in-row, 0) + var(--proximity, 0) * 1000
+    );
   }
 
   img {
@@ -145,8 +147,7 @@
             (#{$maxRotation} / max(var(--cards-in-row, 1), 5))
         )
       )
-      translateY(calc(var(--proximity, 0) * -25px))
-      scale(calc(1 + var(--proximity, 0) * 0.1));
+      translateY(calc(var(--proximity, 0) * -25px)) scale(calc(1 + var(--proximity, 0) * 0.1));
   }
 
   // Mobile landscape
@@ -163,8 +164,7 @@
             (20deg / max(var(--cards-in-row, 1), 5))
         )
       )
-      translateY(calc(var(--proximity, 0) * -20px))
-      scale(calc(1 + var(--proximity, 0) * 0.08));
+      translateY(calc(var(--proximity, 0) * -20px)) scale(calc(1 + var(--proximity, 0) * 0.08));
   }
 
   // Mobile portrait
@@ -181,7 +181,6 @@
             (15deg / max(var(--cards-in-row, 1), 5))
         )
       )
-      translateY(calc(var(--proximity, 0) * -15px))
-      scale(calc(1 + var(--proximity, 0) * 0.06));
+      translateY(calc(var(--proximity, 0) * -15px)) scale(calc(1 + var(--proximity, 0) * 0.06));
   }
 }

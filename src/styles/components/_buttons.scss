@@ -20,12 +20,12 @@
   font-weight: 700;
   cursor: pointer;
   transition: all vars.$transition-fast;
-  box-shadow: vars.$shadow-glow-hot-pink, vars.$shadow-lg;
+  box-shadow: vars.$shadow-hover-dark-blue, vars.$shadow-lg;
   overflow: hidden;
 
   &:hover:not(:disabled) {
     transform: translateY(-10px);
-    box-shadow: 0 0 40px rgba(vars.$color-hot-pink, 0.8), 0 12px 24px rgba(vars.$color-black, 0.4);
+    box-shadow: vars.$shadow-hover-dark-blue, vars.$shadow-lg;
   }
 
   &:active:not(:disabled) {
@@ -83,11 +83,11 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6), 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px vars.$color-slate, 0 4px 8px rgba(vars.$color-black, 0.1);
 
   &:hover:not(:disabled) {
     transform: translateY(-3px);
-    box-shadow: 0 0 50px rgba(0, 212, 255, 0.9), 0 12px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px vars.$color-slate, 0 8px 16px rgba(vars.$color-black, 0.1);
   }
 
   &:disabled {
@@ -115,7 +115,7 @@
   text-transform: uppercase;
 
   &:hover:not(:disabled) {
-    box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+    box-shadow: vars.$shadow-lg, 0 -4px 6px rgba(vars.$color-black, 0.05);
     transform: translateY(-2px);
   }
 
