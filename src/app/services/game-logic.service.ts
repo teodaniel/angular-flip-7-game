@@ -21,10 +21,20 @@ export class GameLogicService {
   }
 
   removeSecondChanceAndBustCard(drawnCards: Card[], bustCardId: number): Card[] {
-    // Remove SECOND CHANCE card and the bust-causing number card
-    return drawnCards.filter(
-      (card) => card.type !== CardType.SECOND_CHANCE && card.id !== bustCardId
-    );
+    // Remove ONE SECOND CHANCE card and the bust-causing number card
+    let secondChanceRemoved = false;
+    return drawnCards.filter((card) => {
+      // Remove the bust card
+      if (card.id === bustCardId) {
+        return false;
+      }
+      // Remove only the first SECOND CHANCE card encountered
+      if (card.type === CardType.SECOND_CHANCE && !secondChanceRemoved) {
+        secondChanceRemoved = true;
+        return false;
+      }
+      return true;
+    });
   }
 
   calculateRoundScore(drawnCards: Card[]): number {
