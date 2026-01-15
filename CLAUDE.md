@@ -164,12 +164,14 @@ The game is built as a single-component application with service-based business 
 
 - Manages all game state using Angular signals
 - Orchestrates game flow (draw, bust detection, turn progression)
-- Signal state includes: players, currentPlayerIndex, currentRoundScore, drawnCards, discardPile, deckCount, isTurnActive, hasBusted, isFlippingThree, showStartModal, showEndModal, showDiscardOverlay, showBustPopup, showFreezePopup, showBonusPopup, showDeckEmptyPopup, showNextPlayerPopup, mousePosition
-- Key methods: `drawCard()`, `autoFlipThree()`, `endTurn()`, `toggleDiscardOverlay()`, `getCardProximity()`, `showTurnEndNotification()`
+- Signal state includes: players, currentPlayerIndex, currentRoundScore, drawnCards, discardPile, deckCount, isTurnActive, hasBusted, isFlippingThree, showStartModal, showEndModal, showDiscardOverlay, showBustPopup, showFreezePopup, showBonusPopup, showDeckEmptyPopup, showNextPlayerPopup, showSecondChancePopup, showFlipThreePopup, mousePosition
+- Key methods: `drawCard()`, `autoFlipThree()`, `endTurn()`, `showNextPlayerAndEndTurn()`, `finalizeTurnEnd()`, `toggleDiscardOverlay()`, `getCardProximity()`, `showTurnEndNotification()`
 - Computed properties: `currentPlayer`, `sortedPlayers`, `canDrawCard`, `canStartGame`
 - Hand limit: 7-card limit applies to NUMBER cards only (special cards don't count toward limit)
 - Mouse tracking: Proximity-based hover animation for fanned cards in discard overlay (listener added/removed dynamically)
 - Turn-end notifications: Map-based system handles both BUST and FREEZE cards with sequential popup animations
+- Turn ending flow: All scenarios (7 cards reached, bust, END TURN click) use common `showNextPlayerAndEndTurn()` method for consistent behavior
+- autoFlipThree: Simple for loop implementation with 300ms stagger between draws (0ms, 300ms, 600ms)
 
 **Data Models:** [src/app/models/card.model.ts](src/app/models/card.model.ts)
 
@@ -203,7 +205,7 @@ The game is built as a single-component application with service-based business 
 - **Config**: [src/app/app.config.ts](src/app/app.config.ts) - Browser configuration with client hydration and global error listeners
 - **Server config**: [src/app/app.config.server.ts](src/app/app.config.server.ts) - Server-specific configuration
 - **Routing**: [src/app/app.routes.ts](src/app/app.routes.ts) - Currently empty (single-page app)
-- **Template**: [src/app/app.html](src/app/app.html) - Game UI with header, player info, deck, drawn cards sections, and notification popups (BUST, FREEZE, BONUS, DECK EMPTY, NEXT PLAYER)
+- **Template**: [src/app/app.html](src/app/app.html) - Game UI with header, player info, deck, drawn cards sections, and notification popups (BUST, FREEZE, BONUS, DECK EMPTY, NEXT PLAYER, SECOND CHANCE, FLIP THREE)
 - **Styles**: [src/app/app.scss](src/app/app.scss) - Imports modular 7-1 pattern architecture from [src/styles/main.scss](src/styles/main.scss)
 
 ### Key Patterns
@@ -243,8 +245,10 @@ The SSR server ([src/server.ts](src/server.ts)):
   - FREEZE popup: Blue gradient background, shown when FREEZE card is drawn
   - BONUS popup: Orange gradient background with 3D text effect (yellow text, red outline, dark blue drop shadow), shown when 7 number cards are reached
   - DECK EMPTY popup: Gray gradient background, shown when deck is empty during reshuffle (1.5s duration)
-  - Next Player popup: Purple gradient background, announces next player after turn ends
-  - Automatic turn progression: First popup → Next Player popup → Turn ends automatically (except BONUS which doesn't trigger next player)
+  - NEXT PLAYER popup: Hot pink/orange gradient background with yellow outlined text, announces next player after turn ends
+  - SECOND CHANCE popup: Green gradient background with yellow text, shown when SECOND CHANCE card prevents a bust
+  - FLIP THREE popup: Purple gradient background with cyan text, shown when FLIP THREE card is activated
+  - Automatic turn progression: First popup (BUST/FREEZE/BONUS) → NEXT PLAYER popup → Turn ends automatically with common `showNextPlayerAndEndTurn()` method
 
 **Interactive Elements:**
 - Discard pile overlay with fanned card display
@@ -266,17 +270,17 @@ The SSR server ([src/server.ts](src/server.ts)):
 - **SCSS Architecture**: Organized using **7-1 Pattern** with modular partials for maintainability and scalability
   - **Master file**: [src/app/app.scss](src/app/app.scss) imports [src/styles/main.scss](src/styles/main.scss)
   - **Abstracts** (`src/styles/abstracts/`):
-    - `_variables.scss` - All design tokens: 25+ colors, spacing scale, borders, shadows, card dimensions, transitions
+    - `_variables.scss` - All design tokens: 25+ colors, spacing scale, borders, shadows (including `$shadow-hover-dark-blue` for consistent button/deck hover effects), card dimensions, transitions
     - `_mixins.scss` - Retro text mixin for bold outlined typography
     - `_index.scss` - Forwards all abstracts with preserved namespaces
   - **Base** (`src/styles/base/`):
     - `_reset.scss` - Global element styles (main container)
     - `_index.scss` - Forwards all base styles
   - **Components** (`src/styles/components/`):
-    - `_buttons.scss` - End turn, start, add, remove buttons
-    - `_cards.scss` - Card styling, animations, fanned cards
+    - `_buttons.scss` - End turn (absolute positioned, dark blue shadow), start, add, remove buttons
+    - `_cards.scss` - Card styling, fanned cards with multi-row layout
     - `_modals.scss` - Start and end game modals
-    - `_popups.scss` - Notification popups (bust, freeze, bonus, etc.) with keyframes
+    - `_popups.scss` - Notification popups (bust, freeze, bonus, deck empty, next player, second chance, flip three) with fadeInOut keyframe animation
     - `_index.scss` - Forwards all components
   - **Layout** (`src/styles/layout/`):
     - `_header.scss` - Header with Flip 7 title
