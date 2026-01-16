@@ -20,16 +20,17 @@
   font-weight: 700;
   cursor: pointer;
   transition: all vars.$transition-fast;
-  box-shadow: vars.$shadow-hover-dark-blue, vars.$shadow-lg;
+  box-shadow: 0 4px 8px rgba(13, 27, 42, 0.3);
   overflow: hidden;
 
   &:hover:not(:disabled) {
     transform: translateY(-10px);
-    box-shadow: vars.$shadow-hover-dark-blue, vars.$shadow-lg;
+    box-shadow: 0 10px 25px rgba(13, 27, 42, 0.4), 0 6px 12px rgba(13, 27, 42, 0.3);
   }
 
   &:active:not(:disabled) {
     transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(13, 27, 42, 0.3);
   }
 
   &:disabled {
