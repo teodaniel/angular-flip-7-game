@@ -171,7 +171,7 @@ The game is built as a single-component application with service-based business 
 - Mouse tracking: Proximity-based hover animation for fanned cards in discard overlay (listener added/removed dynamically)
 - Turn-end notifications: Map-based system handles both BUST and FREEZE cards with sequential popup animations
 - Turn ending flow: All scenarios (7 cards reached, bust, END TURN click) use common `showNextPlayerAndEndTurn()` method for consistent behavior
-- autoFlipThree: Simple for loop implementation with 300ms stagger between draws (0ms, 300ms, 600ms)
+- autoFlipThree: For loop implementation with 500ms stagger between draws (500ms, 1000ms, 1500ms), supports nested FLIP THREE cards with proper delay chaining
 
 **Data Models:** [src/app/models/card.model.ts](src/app/models/card.model.ts)
 
@@ -188,7 +188,7 @@ The game is built as a single-component application with service-based business 
 
 2. [src/app/services/game-logic.service.ts](src/app/services/game-logic.service.ts) - Game Rules (Stateless)
    - `checkBust()` - Detects duplicate number cards
-   - `hasSecondChance()`, `removeSecondChanceAndBustCard()` - Second chance mechanic
+   - `hasSecondChance()`, `removeSecondChanceAndBustCard()` - Second chance mechanic (removes only ONE SECOND CHANCE card, allowing multiple uses)
    - `calculateRoundScore()` - Sums NUMBER and ADDITION cards, applies x2 MULTIPLIER, adds 15-point bonus at 7-card limit
    - `hasFreeze()`, `hasFlipThree()`, `getNumberCardValues()` - Helper methods
 
@@ -246,8 +246,8 @@ The SSR server ([src/server.ts](src/server.ts)):
   - BONUS popup: Orange gradient background with 3D text effect (yellow text, red outline, dark blue drop shadow), shown when 7 number cards are reached
   - DECK EMPTY popup: Gray gradient background, shown when deck is empty during reshuffle (1.5s duration)
   - NEXT PLAYER popup: Hot pink/orange gradient background with yellow outlined text, announces next player after turn ends
-  - SECOND CHANCE popup: Green gradient background with yellow text, shown when SECOND CHANCE card prevents a bust
-  - FLIP THREE popup: Purple gradient background with cyan text, shown when FLIP THREE card is activated
+  - SECOND CHANCE popup: Red/coral gradient (#f47576 → #f14947) with cream yellow text (#fff8d4) and dark blue border (#00098d), shown when SECOND CHANCE card prevents a bust (2s duration)
+  - FLIP THREE popup: Yellow gradient (#f3f13a → #fbbf24) with orange text (#f68712) and dark blue accents (#00098d), shown when FLIP THREE card is activated (1.5s duration)
   - Automatic turn progression: First popup (BUST/FREEZE/BONUS) → NEXT PLAYER popup → Turn ends automatically with common `showNextPlayerAndEndTurn()` method
 
 **Interactive Elements:**
