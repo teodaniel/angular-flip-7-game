@@ -126,12 +126,15 @@ export class App {
     if (this.gameLogic.checkBust(this.drawnCards(), card)) {
       // Check if player has SECOND CHANCE
       if (this.gameLogic.hasSecondChance(this.drawnCards())) {
-        // Use SECOND CHANCE - remove it and the bust card
-        const updatedCards = this.gameLogic.removeSecondChanceAndBustCard(
+        // Use SECOND CHANCE - remove it and the bust card, add them to discard
+        const { remainingCards, removedCards } = this.gameLogic.removeSecondChanceAndBustCard(
           this.drawnCards(),
           card.id
         );
-        this.drawnCards.set(updatedCards);
+        this.drawnCards.set(remainingCards);
+
+        // Add removed cards to discard pile
+        this.discardPile.set([...removedCards, ...this.discardPile()]);
 
         // Show second chance popup
         this.showSecondChancePopup.set(true);
@@ -201,7 +204,12 @@ export class App {
         const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
 
         // Check if we can still draw (excluding isFlippingThree check since we're already flipping)
-        if (this.isTurnActive() && !this.hasBusted() && numberCardCount < this.maxHandSize && this.deckCount() > 0) {
+        if (
+          this.isTurnActive() &&
+          !this.hasBusted() &&
+          numberCardCount < this.maxHandSize &&
+          this.deckCount() > 0
+        ) {
           const card = this.cardDeckService.drawCard();
           this.deckCount.set(this.cardDeckService.getRemainingCount());
 
@@ -225,11 +233,15 @@ export class App {
           // Check for bust
           if (this.gameLogic.checkBust(this.drawnCards(), card)) {
             if (this.gameLogic.hasSecondChance(this.drawnCards())) {
-              const updatedCards = this.gameLogic.removeSecondChanceAndBustCard(
+              const { remainingCards, removedCards } = this.gameLogic.removeSecondChanceAndBustCard(
                 this.drawnCards(),
                 card.id
               );
-              this.drawnCards.set(updatedCards);
+              this.drawnCards.set(remainingCards);
+
+              // Add removed cards to discard pile
+              this.discardPile.set([...this.discardPile(), ...removedCards]);
+
               this.showSecondChancePopup.set(true);
               setTimeout(() => {
                 this.showSecondChancePopup.set(false);
@@ -257,7 +269,7 @@ export class App {
             // Check if this card is also FLIP THREE - add 3 more iterations
             if (card.type === CardType.FLIP_THREE) {
               const currentIteration = i + 1;
-              const nextDelay = baseDelay + ((currentIteration + 1) * 500);
+              const nextDelay = baseDelay + (currentIteration + 1) * 500;
 
               // Show flip three popup for nested FLIP THREE
               this.showFlipThreePopup.set(true);
@@ -280,7 +292,9 @@ export class App {
             }
 
             // Check if 7 number cards reached
-            const updatedNumberCardCount = newCards.filter((c) => c.type === CardType.NUMBER).length;
+            const updatedNumberCardCount = newCards.filter(
+              (c) => c.type === CardType.NUMBER
+            ).length;
             if (updatedNumberCardCount >= this.maxHandSize) {
               this.isTurnActive.set(false);
               this.isFlippingThree.set(false);
@@ -306,7 +320,7 @@ export class App {
           this.isFlippingThree.set(false);
           this.flipThreeCount.set(0);
         }
-      }, baseDelay + ((i + 1) * 500)); // Stagger each draw by 500ms (500ms, 1000ms, 1500ms)
+      }, baseDelay + (i + 1) * 500); // Stagger each draw by 500ms (500ms, 1000ms, 1500ms)
     }
   }
 

@@ -20,21 +20,29 @@ export class GameLogicService {
     return drawnCards.some((card) => card.type === CardType.SECOND_CHANCE);
   }
 
-  removeSecondChanceAndBustCard(drawnCards: Card[], bustCardId: number): Card[] {
+  removeSecondChanceAndBustCard(drawnCards: Card[], bustCardId: number): {
+    remainingCards: Card[];
+    removedCards: Card[];
+  } {
     // Remove ONE SECOND CHANCE card and the bust-causing number card
     let secondChanceRemoved = false;
-    return drawnCards.filter((card) => {
+    const removedCards: Card[] = [];
+    const remainingCards = drawnCards.filter((card) => {
       // Remove the bust card
       if (card.id === bustCardId) {
+        removedCards.push(card);
         return false;
       }
       // Remove only the first SECOND CHANCE card encountered
       if (card.type === CardType.SECOND_CHANCE && !secondChanceRemoved) {
         secondChanceRemoved = true;
+        removedCards.push(card);
         return false;
       }
       return true;
     });
+
+    return { remainingCards, removedCards };
   }
 
   calculateRoundScore(drawnCards: Card[]): number {
