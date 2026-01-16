@@ -47,17 +47,6 @@
 }
 
 // Card labels
-.deck-label {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: vars.$color-hot-pink;
-  font-weight: 900;
-  font-size: 1rem;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
 
 .discard-label {
   position: absolute;
@@ -67,6 +56,18 @@
   color: vars.$color-dark-blue;
   font-weight: 900;
   font-size: 0.9rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.deck-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: vars.$color-dark-blue;
+  font-weight: 900;
+  font-size: 1rem;
   white-space: nowrap;
   text-transform: uppercase;
 }
