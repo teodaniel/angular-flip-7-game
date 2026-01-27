@@ -1,0 +1,150 @@
+// ============================================
+// COMPONENTS - BUTTONS
+// ============================================
+
+@use '../abstracts/variables' as vars;
+@use '../abstracts/mixins' as mixins;
+
+// End Turn Button
+.end-turn-btn {
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  width: vars.$card-width-deck;
+  height: 120px;
+  border: vars.$border-thick solid vars.$color-yellow;
+  background: linear-gradient(135deg, vars.$color-hot-pink 0%, vars.$color-orange 100%);
+  color: vars.$color-white;
+  border-radius: vars.$border-radius-lg;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all vars.$transition-fast;
+  box-shadow: 0 4px 8px rgba(13, 27, 42, 0.3);
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(13, 27, 42, 0.4), 0 6px 12px rgba(13, 27, 42, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(13, 27, 42, 0.3);
+  }
+
+  &:disabled {
+    background: linear-gradient(135deg, vars.$color-gray-medium 0%, vars.$color-gray-dark 100%);
+    border-color: vars.$color-gray-darker;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .btn-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include mixins.retro-text(vars.$color-yellow, vars.$color-purple, vars.$border-medium);
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: 200px;
+
+    .btn-content {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Start Button
+.start-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  border: vars.$border-extra-thick solid vars.$color-hot-pink;
+  background: linear-gradient(
+    135deg,
+    vars.$color-cyan 0%,
+    vars.$color-lime 50%,
+    vars.$color-yellow 100%
+  );
+  color: vars.$color-navy;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 5px 15px vars.$color-slate, 0 4px 8px rgba(vars.$color-black, 0.1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px vars.$color-slate, 0 8px 16px rgba(vars.$color-black, 0.1);
+  }
+
+  &:disabled {
+    background: linear-gradient(
+      135deg,
+      vars.$color-btn-disabled 0%,
+      vars.$color-btn-disabled-border 100%
+    );
+    border-color: vars.$color-btn-disabled-border;
+    cursor: not-allowed;
+  }
+}
+
+// Add Player Button
+.add-btn {
+  padding: 0.75rem 1.5rem;
+  border: vars.$border-medium solid vars.$color-yellow;
+  background: linear-gradient(135deg, vars.$color-hot-pink, vars.$color-orange);
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+
+  &:hover:not(:disabled) {
+    box-shadow: vars.$shadow-lg, 0 -4px 6px rgba(vars.$color-black, 0.05);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background: vars.$color-btn-disabled;
+    border-color: vars.$color-btn-disabled-border;
+    cursor: not-allowed;
+  }
+}
+
+// Remove Player Button
+.remove-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: vars.$color-bust-red-dark;
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  &:hover {
+    background: vars.$color-bust-red-darker;
+    transform: scale(1.1);
+  }
+}

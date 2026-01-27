@@ -1,0 +1,187 @@
+// ============================================
+// COMPONENTS - CARDS
+// ============================================
+
+@use '../abstracts/variables' as vars;
+@use '../abstracts/mixins' as mixins;
+
+// Card styling in drawn cards section
+.card {
+  width: vars.$card-width-hand;
+  height: vars.$card-height-hand;
+  background: vars.$color-white;
+  border: vars.$border-thin solid vars.$color-cyan;
+  border-radius: vars.$border-radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: vars.$color-slate;
+  box-shadow: 0 4px 12px rgba(vars.$color-black, 0.2);
+
+  img {
+    width: vars.$card-width-deck;
+    height: vars.$card-height-deck;
+    border-radius: vars.$border-radius-sm - 2px;
+  }
+}
+
+// Card back (deck)
+.card-back {
+  width: vars.$card-width-deck;
+  height: vars.$card-height-deck;
+  filter: vars.$shadow-xl;
+  transition: filter vars.$transition-medium;
+  border-radius: 5%;
+}
+
+// Discard pile cards
+.discard-empty,
+.discard-top-card {
+  width: vars.$card-width-deck;
+  height: vars.$card-height-deck;
+  filter: vars.$shadow-xl;
+  transition: filter vars.$transition-medium;
+  border-radius: 5%;
+}
+
+// Card labels
+
+.discard-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: vars.$color-dark-blue;
+  font-weight: 900;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.deck-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: vars.$color-dark-blue;
+  font-weight: 900;
+  font-size: 1rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+// Fanned cards in discard overlay
+// Supports multi-row layout when cards exceed viewport width
+// Row calculations are done in TypeScript and passed as CSS custom properties:
+// --row-index: which row this card is in (0-based)
+// --position-in-row: position within the row (0-based)
+// --cards-in-row: total cards in this row
+.fanned-card {
+  position: absolute;
+  width: 120px;
+  height: 168px;
+  transition: transform 0.15s ease-out, z-index 0s;
+  cursor: pointer;
+  transform-origin: bottom center;
+
+  // Spacing configuration
+  $maxRotation: 25deg;
+  $baseSpacing: 55px;
+  $rowHeight: 200px;
+  $rowGap: 40px;
+
+  // Z-index: row * 100 + position for proper layering
+  z-index: calc(var(--row-index, 0) * 100 + var(--position-in-row, 0));
+
+  // Position cards in multi-row fanned layout
+  left: 50%;
+  top: 0;
+
+  // Transform for multi-row fanned layout
+  transform:
+    // Center horizontally
+    translateX(-50%) // Horizontal spread within row (centered around middle of row)
+    translateX(
+      calc((var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * #{$baseSpacing})
+    )
+    // Vertical position based on row index
+    translateY(calc(var(--row-index, 0) * (#{$rowHeight} + #{$rowGap}) + 50px))
+    // Rotation within row (subtle fan effect)
+    rotate(
+      calc(
+        (var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) *
+          (#{$maxRotation} / max(var(--cards-in-row, 1), 5))
+      )
+    )
+    // Proximity-based hover effects
+    translateY(calc(var(--proximity, 0) * -30px)) scale(calc(1 + var(--proximity, 0) * 0.12));
+
+  // Increase z-index when proximity is high (for hover to appear on top)
+  &[style*='--proximity'] {
+    z-index: calc(
+      var(--row-index, 0) * 100 + var(--position-in-row, 0) + var(--proximity, 0) * 1000
+    );
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
+      0 calc(var(--proximity, 0) * 8px) calc(var(--proximity, 0) * 16px)
+        rgba(0, 0, 0, calc(0.2 + var(--proximity, 0) * 0.3));
+  }
+
+  // Tablet - adjust spacing
+  @media (max-width: 992px) {
+    width: 100px;
+    height: 140px;
+
+    transform: translateX(-50%)
+      translateX(calc((var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * 50px))
+      translateY(calc(var(--row-index, 0) * 220px + 40px))
+      rotate(
+        calc(
+          (var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) *
+            (#{$maxRotation} / max(var(--cards-in-row, 1), 5))
+        )
+      )
+      translateY(calc(var(--proximity, 0) * -25px)) scale(calc(1 + var(--proximity, 0) * 0.1));
+  }
+
+  // Mobile landscape
+  @media (max-width: 768px) {
+    width: 85px;
+    height: 119px;
+
+    transform: translateX(-50%)
+      translateX(calc((var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * 45px))
+      translateY(calc(var(--row-index, 0) * 180px + 30px))
+      rotate(
+        calc(
+          (var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) *
+            (20deg / max(var(--cards-in-row, 1), 5))
+        )
+      )
+      translateY(calc(var(--proximity, 0) * -20px)) scale(calc(1 + var(--proximity, 0) * 0.08));
+  }
+
+  // Mobile portrait
+  @media (max-width: 480px) {
+    width: 65px;
+    height: 91px;
+
+    transform: translateX(-50%)
+      translateX(calc((var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) * 35px))
+      translateY(calc(var(--row-index, 0) * 140px + 20px))
+      rotate(
+        calc(
+          (var(--position-in-row, 0) - (var(--cards-in-row, 1) - 1) / 2) *
+            (15deg / max(var(--cards-in-row, 1), 5))
+        )
+      )
+      translateY(calc(var(--proximity, 0) * -15px)) scale(calc(1 + var(--proximity, 0) * 0.06));
+  }
+}

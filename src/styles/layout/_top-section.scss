@@ -1,0 +1,115 @@
+// ============================================
+// LAYOUT - TOP SECTION
+// Player Info, Round Score, Leaderboard
+// ============================================
+
+@use '../abstracts/variables' as vars;
+
+.top-section {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: vars.$spacing-lg;
+  padding: vars.$spacing-md;
+  background: rgba(vars.$color-white, 0.95);
+  border: vars.$border-thick solid vars.$color-dark-blue;
+  border-radius: vars.$border-radius-lg;
+  box-shadow: vars.$shadow-glow-dark-blue, vars.$shadow-lg;
+  margin-bottom: vars.$spacing-lg;
+  position: relative;
+
+  .current-player {
+    display: flex;
+    align-items: center;
+    color: vars.$color-navy;
+
+    h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 900;
+    }
+  }
+
+  .round-score {
+    text-align: center;
+    background: linear-gradient(135deg, vars.$color-crimson, vars.$color-dark-red);
+    padding: vars.$spacing-sm vars.$spacing-lg;
+    border-radius: vars.$border-radius-md;
+    border: vars.$border-medium solid vars.$color-yellow;
+    box-shadow: vars.$shadow-glow-crimson;
+
+    h3 {
+      margin: 0 0 vars.$spacing-xs 0;
+      color: vars.$color-white;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .score {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: vars.$color-yellow;
+      -webkit-text-stroke: vars.$border-thin vars.$color-purple;
+      text-shadow: 3px 3px 0px rgba(vars.$color-black, 0.4);
+    }
+  }
+
+  .leaderboard {
+    color: vars.$color-navy;
+
+    h3 {
+      margin: 0 0 vars.$spacing-sm 0;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: vars.$spacing-xs;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      background: rgba(vars.$color-cyan, 0.1);
+      border-left: vars.$border-thick solid vars.$color-cyan;
+      border-radius: vars.$border-radius-sm - 2px;
+      transition: all vars.$transition-medium;
+
+      &.active {
+        background: rgba(vars.$color-hot-pink, 0.2);
+        border: vars.$border-medium solid vars.$color-hot-pink;
+        border-left-width: vars.$border-thick;
+        transform: translateX(4px);
+      }
+
+      .player-name {
+        font-weight: 700;
+      }
+
+      .player-score {
+        font-weight: 900;
+        color: vars.$color-hot-pink;
+      }
+    }
+  }
+
+  // Mobile responsive
+  @media (max-width: vars.$breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+
+    .round-score {
+      order: -1;
+
+      .score {
+        font-size: 2.5rem;
+      }
+    }
+  }
+}

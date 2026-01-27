@@ -1,0 +1,12 @@
+// ============================================
+// DECK SECTION COMPONENT STYLES
+// ============================================
+
+// Import deck section styles from shared layout
+@use 'layout/deck-section';
+
+// Import card styles for card-back, labels, and discard pile
+@use 'components/cards';
+
+// Import button styles for end turn button
+@use 'components/buttons';

@@ -1,0 +1,53 @@
+<!-- Bust Notification Popup -->
+@if (showBust()) {
+<div class="notification-popup bust-popup">
+  <h2>BUSTED!</h2>
+  <p>You drew a duplicate card</p>
+</div>
+}
+
+<!-- Freeze Notification Popup -->
+@if (showFreeze()) {
+<div class="notification-popup freeze-popup">
+  <h2>FROZEN!</h2>
+  <p>You got Frozen! Better luck next time.</p>
+</div>
+}
+
+<!-- Bonus Notification Popup -->
+@if (showBonus()) {
+<div class="notification-popup bonus-popup">
+  <h2>15 POINT BONUS!</h2>
+</div>
+}
+
+<!-- Deck Empty Notification Popup -->
+@if (showDeckEmpty()) {
+<div class="notification-popup deck-empty-popup">
+  <h2>DECK EMPTY</h2>
+  <p>Reshuffling...</p>
+</div>
+}
+
+<!-- Next Player Notification Popup -->
+@if (showNextPlayer()) {
+<div class="notification-popup next-player-popup">
+  <p>{{ nextPlayerName() }} is now playing</p>
+</div>
+}
+
+<!-- Second Chance Notification Popup -->
+@if (showSecondChance()) {
+<div class="notification-popup second-chance-popup">
+  <h2>SECOND CHANCE!</h2>
+  <p>Bust prevented.</p>
+</div>
+}
+
+<!-- Flip Three Notification Popup -->
+@if (showFlipThree()) {
+<div class="notification-popup flip-three-popup">
+  <h2>FLIP THREE ACTIVATED!</h2>
+  <p>Auto-drawing cards...</p>
+</div>
+}

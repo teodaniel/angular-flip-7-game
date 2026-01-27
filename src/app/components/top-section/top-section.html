@@ -1,0 +1,21 @@
+<!-- Top Section: Player Info, Round Score, Leaderboard -->
+<section class="top-section">
+  <div class="current-player">
+    <h2>{{ currentPlayer().name }}</h2>
+  </div>
+  <div class="round-score">
+    <h3>Round Score</h3>
+    <div class="score">{{ currentRoundScore() }}</div>
+  </div>
+  <div class="leaderboard">
+    <h3>Leaderboard</h3>
+    <div class="leaderboard-list">
+      @for (player of sortedPlayers(); track player.name) {
+      <div class="leaderboard-item" [class.active]="player.name === currentPlayer().name">
+        <span class="player-name">{{ player.name }}</span>
+        <span class="player-score">{{ player.totalScore }}</span>
+      </div>
+      }
+    </div>
+  </div>
+</section>

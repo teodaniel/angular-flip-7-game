@@ -1,0 +1,93 @@
+// ============================================
+// SCSS VARIABLES
+// ============================================
+
+// Color Palette
+$color-pale-white: #faf8f5;
+$color-light-cream: #f5f1e8;
+$color-outer-cream: #ebe5d9;
+$color-dark-blue: #1e3a5f;
+$color-pale-blue: #5a7fa0;
+$color-very-dark-blue: #0d1b2a;
+$color-navy: #1a1a2e;
+$color-yellow: #ffee00;
+$color-pale-yellow: #f0e7c3;
+$color-paler-yellow: #f8f4e0;
+$color-dark-red: #8b0000;
+$color-crimson: #c41e3a;
+$color-hot-pink: #ff006e;
+$color-orange: #ff6b00;
+$color-cyan: #00d4ff;
+$color-purple: #8b00ff;
+$color-white: #ffffff;
+$color-gray-light: #cccccc;
+$color-gray-medium: #999999;
+$color-gray-dark: #666666;
+$color-gray-darker: #444444;
+$color-gray-text: #6c757d;
+$color-slate: #2c3e50;
+$color-black: #000000;
+
+// Popup/Modal specific colors
+$color-bust-red: #ff6b6b;
+$color-bust-red-dark: #e74c3c;
+$color-bust-red-darker: #c0392b;
+$color-freeze-blue: #3498db;
+$color-freeze-blue-dark: #2980b9;
+$color-light-gray-bg: #f5f5f5;
+$color-btn-disabled: #bbb;
+$color-btn-disabled-border: #999;
+$color-lime: #88ff00;
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+$spacing-2xl: 6rem;
+
+// Border Radii
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$border-radius-lg: 16px;
+$border-radius-xl: 20px;
+$border-radius-2xl: 24px;
+
+// Border Widths
+$border-thin: 2px;
+$border-medium: 3px;
+$border-thick: 4px;
+$border-extra-thick: 5px;
+$border-very-thick: 6px;
+$border-ultra-thick: 8px;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+$shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.3);
+$shadow-header: 0 4px 12px rgba(0, 0, 0, 0.15);
+$shadow-glow-dark-blue: 0 0 30px rgba(30, 58, 95, 0.2);
+$shadow-glow-crimson: 0 0 20px rgba(196, 30, 58, 0.5);
+$shadow-dark-blue: drop-shadow(1px 2px 5px rgba(13, 27, 42, 0.38))
+  drop-shadow(1px 2px 5px rgba(13, 27, 42, 0.6));
+$shadow-hover-dark-blue: drop-shadow(4px 5px 15px rgba(13, 27, 42, 0.38))
+  drop-shadow(4px 5px 25px rgba(13, 27, 42, 0.6));
+
+// Card Dimensions
+$card-width-deck: 150px;
+$card-height-deck: 210px;
+$card-width-hand: 80px;
+$card-height-hand: 112px;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-medium: 0.3s ease;
+$transition-slow: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// Font Families
+$font-retro: 'Arial Black', 'Arial Bold', sans-serif;
+
+// Breakpoints
+$breakpoint-mobile: 768px;

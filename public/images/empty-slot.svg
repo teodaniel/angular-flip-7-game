@@ -1,0 +1,13 @@
+<svg width="120" height="168" viewBox="0 0 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Empty slot background -->
+  <rect width="120" height="168" rx="8" fill="#f0f0f0"/>
+
+  <!-- Dashed border -->
+  <rect x="4" y="4" width="112" height="160" rx="6" stroke="#cccccc" stroke-width="2" stroke-dasharray="8 4" fill="none"/>
+
+  <!-- Inner area -->
+  <rect x="12" y="12" width="96" height="144" rx="4" fill="#fafafa"/>
+
+  <!-- Empty icon (outline of a card) -->
+  <rect x="35" y="54" width="50" height="60" rx="4" stroke="#999999" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
+</svg>

@@ -1,0 +1,9 @@
+// ============================================
+// DRAWN CARDS COMPONENT STYLES
+// ============================================
+
+// Import drawn cards styles from shared layout
+@use 'layout/drawn-cards';
+
+// Import card styles
+@use 'components/cards';

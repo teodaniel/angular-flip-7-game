@@ -1,0 +1,40 @@
+// ============================================
+// LAYOUT - DRAWN CARDS SECTION
+// Bottom section displaying cards drawn in current turn
+// ============================================
+
+@use '../abstracts/variables' as vars;
+
+.drawn-cards-section {
+  background: rgba(vars.$color-white, 0.95);
+  border: vars.$border-thick solid vars.$color-dark-blue;
+  border-radius: vars.$border-radius-lg;
+  padding: vars.$spacing-md;
+  box-shadow: vars.$shadow-glow-dark-blue, 0 -4px 6px rgba(vars.$color-black, 0.05);
+  min-height: 200px;
+
+  h3 {
+    margin: 0 0 vars.$spacing-sm 0;
+    color: vars.$color-navy;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-bottom: vars.$spacing-xs;
+    border-bottom: vars.$border-medium solid vars.$color-hot-pink;
+  }
+
+  .cards-container {
+    display: flex;
+    gap: vars.$spacing-sm;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    .empty-message {
+      color: vars.$color-gray-text;
+      font-style: italic;
+      margin: vars.$spacing-lg 0;
+    }
+  }
+}

@@ -1,0 +1,62 @@
+// ============================================
+// LAYOUT - DISCARD OVERLAY
+// Fullscreen overlay showing fanned discard pile
+// Supports multi-row display when cards exceed screen width
+// Row calculations are done in TypeScript via CSS custom properties
+// ============================================
+
+@use '../abstracts/variables' as vars;
+
+.discard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(
+    circle at center,
+    rgba(121, 129, 131, 0.3) 0%,
+    rgba(104, 104, 104, 0.3) 50%,
+    rgba(53, 53, 53, 0.9) 100%
+  );
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 999;
+  padding: 2rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .fanned-cards {
+    position: relative;
+    width: 90%;
+    max-width: 1400px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    // Dynamic height based on number of rows (calculated in TypeScript)
+    // --total-rows is passed from the component
+    height: calc(var(--total-rows, 1) * 240px + 50px);
+    min-height: 280px;
+
+    // Tablet
+    @media (max-width: 992px) {
+      height: calc(var(--total-rows, 1) * 220px + 40px);
+      min-height: 240px;
+    }
+
+    // Mobile landscape
+    @media (max-width: vars.$breakpoint-mobile) {
+      height: calc(var(--total-rows, 1) * 180px + 30px);
+      min-height: 200px;
+    }
+
+    // Mobile portrait
+    @media (max-width: 480px) {
+      height: calc(var(--total-rows, 1) * 140px + 20px);
+      min-height: 160px;
+    }
+  }
+}

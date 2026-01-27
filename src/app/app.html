@@ -1,175 +1,65 @@
 <!-- Start Screen Modal -->
-@if (showStartModal()) {
-<div class="modal-overlay">
-  <div class="modal start-modal">
-    <h1>FLIP 7</h1>
-    <p class="subtitle">First to 200 points wins!</p>
-
-    <div class="players-section">
-      <h2>Players ({{ players().length }}/{{ maxPlayers }})</h2>
-      <div class="players-list">
-        @for (player of players(); track $index) {
-        <div class="player-item">
-          <input
-            type="text"
-            [value]="player.name"
-            (blur)="updatePlayerName($index, $event.target.value)"
-            (keyup.enter)="$event.target.blur()"
-            class="player-name-input"
-          />
-          @if (canRemovePlayer) {
-          <button (click)="removePlayer($index)" class="remove-btn">×</button>
-          }
-        </div>
-        }
-      </div>
-
-      <div class="add-player-section">
-        <input
-          type="text"
-          [(ngModel)]="newPlayerName"
-          (keyup.enter)="addPlayer()"
-          placeholder="Enter player name (optional)"
-          class="new-player-input"
-          [disabled]="!canAddPlayer"
-        />
-        <button (click)="addPlayer()" [disabled]="!canAddPlayer" class="add-btn">Add Player</button>
-      </div>
-
-      @if (players().length < minPlayers) {
-      <p class="error-message">Minimum {{ minPlayers }} players required</p>
-      } @if (players().length >= maxPlayers) {
-      <p class="info-message">Maximum {{ maxPlayers }} players reached</p>
-      }
-    </div>
-
-    <button (click)="startGame()" [disabled]="!canStartGame" class="start-btn">START</button>
-  </div>
-</div>
-}
+<app-start-modal
+  [show]="showStartModal()"
+  [players]="players()"
+  [minPlayers]="minPlayers"
+  [maxPlayers]="maxPlayers"
+  [canStartGame]="canStartGame()"
+  (addPlayer)="handleAddPlayer($event)"
+  (removePlayer)="handleRemovePlayer($event)"
+  (updatePlayerName)="handleUpdatePlayerName($event)"
+  (startGame)="startGame()"
+/>
 
 <!-- End Game Modal -->
-@if (showEndModal() && winner()) {
-<div class="modal-overlay">
-  <div class="modal end-modal">
-    <h1>CONGRATULATIONS!</h1>
-    <p class="winner-text">{{ winner()!.name }} wins with {{ winner()!.totalScore }} points!</p>
-    <p class="continue-text" (click)="returnToStart()">click to continue</p>
-  </div>
-</div>
-}
+<app-end-modal
+  [show]="showEndModal()"
+  [winner]="winner()"
+  (returnToStart)="returnToStart()"
+/>
 
-<!-- Bust Notification Popup -->
-@if (showBustPopup()) {
-<div class="notification-popup bust-popup">
-  <h2>BUSTED!</h2>
-  <p>You drew a duplicate card</p>
-</div>
-}
+<!-- Notification Popups -->
+<app-notification-popups
+  [showBust]="showBustPopup()"
+  [showFreeze]="showFreezePopup()"
+  [showBonus]="showBonusPopup()"
+  [showDeckEmpty]="showDeckEmptyPopup()"
+  [showNextPlayer]="showNextPlayerPopup()"
+  [showSecondChance]="showSecondChancePopup()"
+  [showFlipThree]="showFlipThreePopup()"
+  [nextPlayerName]="nextPlayerName()"
+/>
 
-<!-- Next Player Notification Popup -->
-@if (showNextPlayerPopup()) {
-<div class="notification-popup next-player-popup">
-  <p>{{ players()[(currentPlayerIndex() + 1) % players().length].name }} is now playing</p>
-</div>
-}
-
-<header>
-  <h1>Flip 7</h1>
-</header>
+<!-- Header -->
+<app-header />
 
 <main>
   <!-- Top Section: Player Info, Round Score, Leaderboard -->
-  <section class="top-section">
-    <div class="current-player">
-      <h2>{{ currentPlayer.name }}</h2>
-    </div>
-    <div class="round-score">
-      <h3>Round Score</h3>
-      <div class="score">{{ currentRoundScore() }}</div>
-    </div>
-    <div class="leaderboard">
-      <h3>Leaderboard</h3>
-      <div class="leaderboard-list">
-        @for (player of sortedPlayers; track player.name) {
-        <div class="leaderboard-item" [class.active]="player.name === currentPlayer.name">
-          <span class="player-name">{{ player.name }}</span>
-          <span class="player-score">{{ player.totalScore }}</span>
-        </div>
-        }
-      </div>
-    </div>
-  </section>
+  <app-top-section
+    [currentPlayer]="currentPlayer()"
+    [currentRoundScore]="currentRoundScore()"
+    [sortedPlayers]="sortedPlayers()"
+  />
 
   <!-- Central Section: Card Deck -->
-  <section class="deck-section">
-    <!-- Discard Pile (Bottom Left) -->
-    <div class="discard-pile" (click)="toggleDiscardOverlay()">
-      @if (discardPile().length === 0) {
-      <img src="images/discard-placeholder.svg" alt="Empty discard pile" class="discard-empty" />
-      } @else {
-      <img
-        [src]="discardPile()[0].imageUrl"
-        alt="Bottom discard card"
-        class="discard-top-card"
-      />
-      }
-      <div class="discard-label">DISCARD PILE</div>
-    </div>
-
-    <!-- Main Deck (Center) -->
-    <div class="deck" (click)="drawCard()">
-      <div class="hit-me-text">HIT ME!</div>
-      <img src="images/card-back.svg" alt="Card deck" class="card-back" />
-      <div class="deck-label">Click to Draw</div>
-    </div>
-
-    <!-- End Turn Button (Bottom Right) -->
-    <button
-      class="end-turn-btn"
-      (click)="endTurn()"
-      [disabled]="!isTurnActive() || drawnCards().length === 0"
-    >
-      <div class="btn-content">
-        <div class="stay-text">STAY</div>
-        END TURN
-      </div>
-    </button>
-  </section>
+  <app-deck-section
+    [discardPile]="discardPile()"
+    [deckCount]="deckCount()"
+    [canDrawCard]="canDrawCard()"
+    [isTurnActive]="isTurnActive()"
+    [hasDrawnCards]="drawnCards().length > 0"
+    (drawCard)="drawCard()"
+    (endTurn)="endTurn()"
+    (viewDiscardPile)="handleViewDiscardPile()"
+  />
 
   <!-- Discard Pile Overlay -->
-  @if (showDiscardOverlay()) {
-  <div class="discard-overlay" (click)="closeDiscardOverlay($event)">
-    <div class="fanned-cards">
-      @for (card of discardPile(); track card.id; let i = $index) {
-      <div
-        [id]="'card-' + card.id"
-        #cardElement
-        class="fanned-card"
-        [style.--card-index]="i"
-        [style.--total-cards]="discardPile().length"
-        [style.--proximity]="mousePosition() && getCardProximity(cardElement)"
-      >
-        <img [src]="card.imageUrl" [alt]="card.displayValue" />
-      </div>
-      }
-    </div>
-  </div>
-  }
+  <app-discard-overlay
+    [show]="showDiscardOverlay()"
+    [cards]="discardPile()"
+    (close)="handleCloseDiscardOverlay()"
+  />
 
   <!-- Bottom Section: Drawn Cards -->
-  <section class="drawn-cards-section">
-    <h3>Your Cards</h3>
-    <div class="cards-container">
-      @if (drawnCards().length === 0) {
-      <p class="empty-message">No cards drawn yet</p>
-      } @else { @for (card of drawnCards(); track card.id) {
-      <div class="card">
-        <img [src]="card.imageUrl" [alt]="card.displayValue" />
-      </div>
-      } }
-    </div>
-  </section>
+  <app-drawn-cards [cards]="drawnCards()" />
 </main>
-
-<router-outlet />

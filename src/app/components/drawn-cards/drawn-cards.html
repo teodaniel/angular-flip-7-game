@@ -1,0 +1,13 @@
+<!-- Bottom Section: Drawn Cards -->
+<section class="drawn-cards-section">
+  <h3>Your Cards</h3>
+  <div class="cards-container">
+    @if (cards().length === 0) {
+    <p class="empty-message">No cards drawn yet</p>
+    } @else { @for (card of cards(); track card.id) {
+    <div class="card">
+      <img [src]="card.imageUrl" [alt]="card.displayValue" />
+    </div>
+    } }
+  </div>
+</section>

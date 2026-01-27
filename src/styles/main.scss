@@ -1,0 +1,20 @@
+// ============================================
+// MAIN STYLESHEET
+// 7-1 Pattern Architecture
+// ============================================
+
+// ABSTRACTS - Variables, mixins, functions
+// Make abstracts available globally with explicit namespace
+@use 'abstracts' as abstracts;
+
+// BASE - Reset, global element styles
+@use 'base';
+
+// LAYOUT - Major layout components
+@use 'layout';
+
+// COMPONENTS - Reusable UI components
+@use 'components';
+
+// THEMES - Theme variations (empty for now)
+@use 'themes';
