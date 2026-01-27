@@ -1,0 +1,9 @@
+// ============================================
+// DISCARD OVERLAY COMPONENT STYLES
+// ============================================
+
+// Import discard overlay styles from shared layout
+@use 'layout/discard-overlay';
+
+// Import card styles for fanned cards
+@use 'components/cards';

@@ -1,0 +1,35 @@
+<!-- Central Section: Card Deck -->
+<section class="deck-section">
+  <!-- Discard Pile -->
+  <div class="discard-pile" (click)="handleViewDiscardPile()">
+    @if (discardPile().length === 0) {
+    <img src="images/discard-placeholder.svg" alt="Empty discard pile" class="discard-empty" />
+    } @else {
+    <img
+      [src]="discardPile()[0].imageUrl"
+      alt="Bottom discard card"
+      class="discard-top-card"
+    />
+    }
+    <div class="discard-label">DISCARD PILE</div>
+  </div>
+
+  <!-- Main Deck -->
+  <div class="deck" [class.deck-empty]="deckCount() === 0" (click)="handleDrawCard()">
+    @if (deckCount() > 0) {
+    <img src="images/card-back.svg" alt="Card deck" class="card-back" />
+    } @else {
+    <img src="images/empty-slot.svg" alt="Empty deck" class="card-back" />
+    }
+    <div class="deck-label">{{ deckCount() > 0 ? 'Click to Draw' : 'Empty' }}</div>
+  </div>
+
+  <!-- End Turn Button -->
+  <button
+    class="end-turn-btn"
+    (click)="handleEndTurn()"
+    [disabled]="!isTurnActive() || !hasDrawnCards()"
+  >
+    <div class="btn-content">END TURN</div>
+  </button>
+</section>

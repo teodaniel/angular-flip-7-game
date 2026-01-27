@@ -1,0 +1,9 @@
+// ============================================
+// START MODAL COMPONENT STYLES
+// ============================================
+
+// Import modal styles from shared components
+@use 'components/modals';
+
+// Import button styles for start, add, and remove buttons
+@use 'components/buttons';

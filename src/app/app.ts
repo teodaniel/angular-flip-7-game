@@ -1,19 +1,33 @@
-import { Component, signal, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, signal, inject, computed } from '@angular/core';
 import { Card, CardType } from './models/card.model';
 import { CardDeckService } from './services/card-deck.service';
 import { GameLogicService } from './services/game-logic.service';
+import { StartModal } from './components/start-modal/start-modal';
+import { EndModal } from './components/end-modal/end-modal';
+import { NotificationPopups } from './components/notification-popups/notification-popups';
+import { Header } from './components/header/header';
+import { TopSection } from './components/top-section/top-section';
+import { DeckSection } from './components/deck-section/deck-section';
+import { DrawnCards } from './components/drawn-cards/drawn-cards';
+import { DiscardOverlay } from './components/discard-overlay/discard-overlay';
 
-interface Player {
+export interface Player {
   name: string;
   totalScore: number;
 }
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule],
+  imports: [
+    StartModal,
+    EndModal,
+    NotificationPopups,
+    Header,
+    TopSection,
+    DeckSection,
+    DrawnCards,
+    DiscardOverlay,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -42,14 +56,11 @@ export class App {
   protected readonly showStartModal = signal(true);
   protected readonly showEndModal = signal(false);
   protected readonly winner = signal<Player | null>(null);
-  protected readonly newPlayerName = signal('');
   protected readonly minPlayers = 3;
   protected readonly maxPlayers = 18;
 
   // Discard overlay state
   protected readonly showDiscardOverlay = signal(false);
-  protected readonly mousePosition = signal({ x: 0, y: 0 });
-  private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
 
   // Notification popup states
   protected readonly showBustPopup = signal(false);
@@ -60,15 +71,20 @@ export class App {
   protected readonly showSecondChancePopup = signal(false);
   protected readonly showFlipThreePopup = signal(false);
 
-  protected get currentPlayer(): Player {
-    return this.players()[this.currentPlayerIndex()];
-  }
+  // Computed signals - memoized, only recalculate when dependencies change
+  protected readonly currentPlayer = computed(() =>
+    this.players()[this.currentPlayerIndex()]
+  );
 
-  protected get sortedPlayers(): Player[] {
-    return [...this.players()].sort((a, b) => b.totalScore - a.totalScore);
-  }
+  protected readonly sortedPlayers = computed(() =>
+    [...this.players()].sort((a, b) => b.totalScore - a.totalScore)
+  );
 
-  protected get canDrawCard(): boolean {
+  protected readonly nextPlayerName = computed(() =>
+    this.players()[(this.currentPlayerIndex() + 1) % this.players().length].name
+  );
+
+  protected readonly canDrawCard = computed(() => {
     const numberCardCount = this.drawnCards().filter((c) => c.type === CardType.NUMBER).length;
     return (
       this.isTurnActive() &&
@@ -77,19 +93,11 @@ export class App {
       this.deckCount() > 0 &&
       !this.isFlippingThree()
     );
-  }
+  });
 
-  protected get canStartGame(): boolean {
-    return this.players().length >= this.minPlayers && this.players().length <= this.maxPlayers;
-  }
-
-  protected get canAddPlayer(): boolean {
-    return this.players().length < this.maxPlayers;
-  }
-
-  protected get canRemovePlayer(): boolean {
-    return this.players().length > this.minPlayers;
-  }
+  protected readonly canStartGame = computed(() =>
+    this.players().length >= this.minPlayers && this.players().length <= this.maxPlayers
+  );
 
   protected drawCard(): void {
     // If deck is empty (count is 0), prevent drawing
@@ -97,7 +105,7 @@ export class App {
       return;
     }
 
-    if (!this.canDrawCard) {
+    if (!this.canDrawCard()) {
       return;
     }
 
@@ -375,32 +383,26 @@ export class App {
     }
   }
 
-  protected addPlayer(): void {
-    if (!this.canAddPlayer) return;
-
+  protected handleAddPlayer(playerName: string): void {
     const playerNumber = this.players().length + 1;
-    const playerName = this.newPlayerName().trim() || `Player ${playerNumber}`;
-
-    this.players.set([...this.players(), { name: playerName, totalScore: 0 }]);
-    this.newPlayerName.set('');
+    const name = playerName.trim() || `Player ${playerNumber}`;
+    this.players.set([...this.players(), { name, totalScore: 0 }]);
   }
 
-  protected removePlayer(index: number): void {
-    if (!this.canRemovePlayer) return;
-
+  protected handleRemovePlayer(index: number): void {
     const updatedPlayers = this.players().filter((_, i) => i !== index);
     this.players.set(updatedPlayers);
   }
 
-  protected updatePlayerName(index: number, name: string): void {
+  protected handleUpdatePlayerName(event: { index: number; name: string }): void {
     const updatedPlayers = this.players().map((p, i) =>
-      i === index ? { ...p, name: name.trim() || `Player ${index + 1}` } : p
+      i === event.index ? { ...p, name: event.name.trim() || `Player ${event.index + 1}` } : p
     );
     this.players.set(updatedPlayers);
   }
 
   protected startGame(): void {
-    if (!this.canStartGame) return;
+    if (!this.canStartGame()) return;
 
     this.showStartModal.set(false);
     this.resetGameState();
@@ -433,91 +435,15 @@ export class App {
     this.resetGameState();
   }
 
-  protected toggleDiscardOverlay(): void {
+  protected handleViewDiscardPile(): void {
     // Only show overlay if there are cards in the discard pile
     if (this.discardPile().length > 0) {
-      const newState = !this.showDiscardOverlay();
-      this.showDiscardOverlay.set(newState);
-
-      if (newState) {
-        // Start listening to mouse movement
-        this.mouseMoveListener = (e: MouseEvent) => {
-          this.mousePosition.set({ x: e.clientX, y: e.clientY });
-        };
-        window.addEventListener('mousemove', this.mouseMoveListener);
-      } else {
-        // Stop listening to mouse movement
-        if (this.mouseMoveListener) {
-          window.removeEventListener('mousemove', this.mouseMoveListener);
-          this.mouseMoveListener = null;
-        }
-      }
+      this.showDiscardOverlay.set(true);
     }
   }
 
-  protected closeDiscardOverlay(event: MouseEvent): void {
-    // Close if clicking outside of cards (on the overlay background)
-    const target = event.target as HTMLElement;
-    if (target.classList.contains('discard-overlay')) {
-      this.showDiscardOverlay.set(false);
-
-      // Remove mouse listener
-      if (this.mouseMoveListener) {
-        window.removeEventListener('mousemove', this.mouseMoveListener);
-        this.mouseMoveListener = null;
-      }
-    }
-  }
-
-  protected getCardProximity(cardElement: HTMLElement): number {
-    const rect = cardElement.getBoundingClientRect();
-    const cardCenterX = rect.left + rect.width / 2;
-    const cardCenterY = rect.top + rect.height / 2;
-
-    const mousePos = this.mousePosition();
-    const distanceX = mousePos.x - cardCenterX;
-    const distanceY = mousePos.y - cardCenterY;
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-
-    // Define max distance for effect (200px)
-    const maxDistance = 200;
-    // Calculate proximity: 1 when mouse is on card, 0 when far away
-    const proximity = Math.max(0, 1 - distance / maxDistance);
-
-    return proximity;
-  }
-
-  // Calculate cards per row based on viewport width
-  protected getCardsPerRow(): number {
-    const width = window.innerWidth;
-    if (width >= 1400) return 25;
-    if (width >= 1200) return 20;
-    if (width >= 992) return 16;
-    if (width >= 768) return 12;
-    if (width >= 480) return 8;
-    return 6;
-  }
-
-  // Calculate row index for a card
-  protected getRowIndex(cardIndex: number): number {
-    return Math.floor(cardIndex / this.getCardsPerRow());
-  }
-
-  // Calculate position within row for a card
-  protected getPositionInRow(cardIndex: number): number {
-    return cardIndex % this.getCardsPerRow();
-  }
-
-  // Calculate number of cards in a specific row
-  protected getCardsInRow(rowIndex: number, totalCards: number): number {
-    const cardsPerRow = this.getCardsPerRow();
-    const startIndex = rowIndex * cardsPerRow;
-    return Math.min(cardsPerRow, totalCards - startIndex);
-  }
-
-  // Get total number of rows
-  protected getTotalRows(): number {
-    return Math.ceil(this.discardPile().length / this.getCardsPerRow());
+  protected handleCloseDiscardOverlay(): void {
+    this.showDiscardOverlay.set(false);
   }
 
   private showTurnEndNotification(cardType: CardType): void {

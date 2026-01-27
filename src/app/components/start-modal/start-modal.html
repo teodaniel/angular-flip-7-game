@@ -1,0 +1,53 @@
+<!-- Start Screen Modal -->
+@if (show()) {
+<div class="modal-overlay">
+  <div class="modal start-modal">
+    <h1>FLIP 7</h1>
+    <p class="subtitle">First to 200 points wins!</p>
+
+    <div class="players-section">
+      <h2>Players ({{ players().length }}/{{ maxPlayers() }})</h2>
+      <div class="players-list">
+        @for (player of players(); track $index) {
+        <div class="player-item">
+          <input
+            type="text"
+            [value]="player.name"
+            (blur)="handleUpdatePlayerName($index, $event.target.value)"
+            (keyup.enter)="$event.target.blur()"
+            class="player-name-input"
+          />
+          @if (canRemovePlayer) {
+          <button (click)="handleRemovePlayer($index)" class="remove-btn">×</button>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="add-player-section">
+        <input
+          type="text"
+          [(ngModel)]="newPlayerName"
+          (keyup.enter)="handleAddPlayer()"
+          placeholder="Enter player name (optional)"
+          class="new-player-input"
+          [disabled]="!canAddPlayer"
+        />
+        <button (click)="handleAddPlayer()" [disabled]="!canAddPlayer" class="add-btn">
+          Add Player
+        </button>
+      </div>
+
+      @if (players().length < minPlayers()) {
+      <p class="error-message">Minimum {{ minPlayers() }} players required</p>
+      } @if (players().length >= maxPlayers()) {
+      <p class="info-message">Maximum {{ maxPlayers() }} players reached</p>
+      }
+    </div>
+
+    <button (click)="handleStartGame()" [disabled]="!canStartGame()" class="start-btn">
+      START
+    </button>
+  </div>
+</div>
+}

@@ -1,0 +1,27 @@
+<!-- Discard Pile Overlay -->
+@if (show()) {
+<div class="discard-overlay" (click)="handleClose($event)">
+  <div
+    class="fanned-cards"
+    [style.--total-cards]="cards().length"
+    [style.--total-rows]="getTotalRows()"
+    [style.--cards-per-row]="getCardsPerRow()"
+  >
+    @for (card of cards(); track card.id; let i = $index) {
+    <div
+      [id]="'card-' + card.id"
+      #cardElement
+      class="fanned-card"
+      [style.--card-index]="i"
+      [style.--total-cards]="cards().length"
+      [style.--row-index]="getRowIndex(i)"
+      [style.--position-in-row]="getPositionInRow(i)"
+      [style.--cards-in-row]="getCardsInRow(getRowIndex(i), cards().length)"
+      [style.--proximity]="mousePosition() && getCardProximity(cardElement)"
+    >
+      <img [src]="card.imageUrl" [alt]="card.displayValue" />
+    </div>
+    }
+  </div>
+</div>
+}

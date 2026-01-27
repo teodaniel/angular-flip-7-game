@@ -1,0 +1,10 @@
+<!-- End Game Modal -->
+@if (show() && winner()) {
+<div class="modal-overlay">
+  <div class="modal end-modal">
+    <h1>CONGRATULATIONS!</h1>
+    <p class="winner-text">{{ winner()!.name }} wins with {{ winner()!.totalScore }} points!</p>
+    <p class="continue-text" (click)="handleReturnToStart()">click to continue</p>
+  </div>
+</div>
+}
