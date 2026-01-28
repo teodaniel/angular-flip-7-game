@@ -127,3 +127,41 @@ input {
   -webkit-appearance: none;
   border-radius: 0;
 }
+
+// Screen reader only utility class
+// Visually hides content while keeping it accessible to screen readers
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Skip navigation link
+// Hidden until focused with keyboard, allows users to bypass header
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 10000;
+  padding: vars.$spacing-sm vars.$spacing-md;
+  background: vars.$color-dark-blue;
+  color: vars.$color-yellow;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  border: vars.$border-medium solid vars.$color-yellow;
+  border-radius: vars.$border-radius-sm;
+  transition: top vars.$transition-fast;
+
+  &:focus {
+    top: vars.$spacing-sm;
+    outline: 3px solid vars.$color-yellow;
+    outline-offset: 2px;
+  }
+}

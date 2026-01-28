@@ -1,4 +1,13 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  effect,
+  ElementRef,
+  viewChild,
+  ChangeDetectionStrategy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Player {
@@ -20,6 +29,35 @@ export class EndModal {
 
   // Outputs
   readonly returnToStart = output<void>();
+
+  // View references for focus management
+  private readonly modalContainer = viewChild<ElementRef<HTMLDivElement>>('modalContainer');
+
+  constructor() {
+    // Effect to manage focus when modal opens
+    effect(() => {
+      if (this.show()) {
+        // Set focus to modal container when it opens
+        setTimeout(() => {
+          const modal = this.modalContainer()?.nativeElement;
+          if (modal) {
+            // Make container focusable and focus it
+            modal.setAttribute('tabindex', '-1');
+            modal.focus();
+          }
+        }, 0);
+      }
+    });
+  }
+
+  // Handle Escape key or Enter key to close modal
+  @HostListener('document:keydown.escape')
+  @HostListener('document:keydown.enter')
+  protected handleKeyClose(): void {
+    if (this.show()) {
+      this.handleReturnToStart();
+    }
+  }
 
   protected handleReturnToStart(): void {
     this.returnToStart.emit();

@@ -1,11 +1,13 @@
 <!-- Top Section: Player Info, Round Score, Leaderboard -->
 <section class="top-section">
   <div class="current-player">
-    <h2>{{ currentPlayer().name }}</h2>
+    <h2 role="status" aria-live="polite">{{ currentPlayer().name }}</h2>
   </div>
   <div class="round-score">
     <h3>Round Score</h3>
-    <div class="score">{{ currentRoundScore() }}</div>
+    <div class="score" role="status" aria-live="polite" aria-atomic="true">
+      {{ currentRoundScore() }}
+    </div>
   </div>
   <div class="leaderboard">
     <h3>Leaderboard</h3>

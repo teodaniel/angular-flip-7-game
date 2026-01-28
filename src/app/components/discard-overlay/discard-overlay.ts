@@ -1,4 +1,14 @@
-import { Component, input, output, signal, effect, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  effect,
+  ElementRef,
+  viewChild,
+  ChangeDetectionStrategy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../models/card.model';
 
@@ -22,10 +32,21 @@ export class DiscardOverlay {
   private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
   private rafId: number | null = null;
 
+  // View references for focus management
+  private readonly overlayContainer = viewChild<ElementRef<HTMLDivElement>>('overlayContainer');
+
   constructor() {
-    // Effect to manage mouse listener when show changes
+    // Effect to manage mouse listener and focus when show changes
     effect(() => {
       if (this.show()) {
+        // Set focus to overlay when it opens
+        setTimeout(() => {
+          const overlay = this.overlayContainer()?.nativeElement;
+          if (overlay) {
+            overlay.focus();
+          }
+        }, 0);
+
         // Start listening to mouse movement with RAF throttling
         this.mouseMoveListener = (e: MouseEvent) => {
           // Throttle to animation frame (~16ms instead of ~1ms)
@@ -51,6 +72,14 @@ export class DiscardOverlay {
         }
       }
     });
+  }
+
+  // Handle Escape key to close overlay
+  @HostListener('document:keydown.escape')
+  protected handleEscape(): void {
+    if (this.show()) {
+      this.close.emit();
+    }
   }
 
   protected handleClose(event: MouseEvent): void {

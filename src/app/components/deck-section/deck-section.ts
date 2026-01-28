@@ -1,4 +1,4 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../models/card.model';
 
@@ -21,6 +21,49 @@ export class DeckSection {
   readonly drawCard = output<void>();
   readonly endTurn = output<void>();
   readonly viewDiscardPile = output<void>();
+
+  // Keyboard shortcut: Space to draw card
+  @HostListener('document:keydown.space', ['$event'])
+  protected handleSpaceKey(event: Event): void {
+    const keyEvent = event as KeyboardEvent;
+
+    // Don't trigger if user is typing in an input/textarea or if modal is open
+    const target = keyEvent.target as HTMLElement;
+    if (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      document.querySelector('[role="dialog"]')
+    ) {
+      return;
+    }
+
+    if (this.canDrawCard()) {
+      keyEvent.preventDefault();
+      this.handleDrawCard();
+    }
+  }
+
+  // Keyboard shortcut: Enter to end turn
+  @HostListener('document:keydown.enter', ['$event'])
+  protected handleEnterKey(event: Event): void {
+    const keyEvent = event as KeyboardEvent;
+
+    // Don't trigger if user is typing in an input/textarea or if modal is open
+    const target = keyEvent.target as HTMLElement;
+    if (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      document.querySelector('[role="dialog"]')
+    ) {
+      return;
+    }
+
+    // Only end turn if it's active and cards have been drawn
+    if (this.isTurnActive() && this.hasDrawnCards()) {
+      keyEvent.preventDefault();
+      this.handleEndTurn();
+    }
+  }
 
   protected handleDrawCard(): void {
     this.drawCard.emit();

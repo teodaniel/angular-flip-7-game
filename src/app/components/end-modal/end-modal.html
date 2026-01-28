@@ -1,8 +1,14 @@
 <!-- End Game Modal -->
 @if (show() && winner()) {
 <div class="modal-overlay">
-  <div class="modal end-modal">
-    <h1>CONGRATULATIONS!</h1>
+  <div
+    #modalContainer
+    class="modal end-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="end-modal-title"
+  >
+    <h1 id="end-modal-title">CONGRATULATIONS!</h1>
     <p class="winner-text">{{ winner()!.name }} wins with {{ winner()!.totalScore }} points!</p>
     <p class="continue-text" (click)="handleReturnToStart()">click to continue</p>
   </div>

@@ -16,11 +16,18 @@
 
   // Discard Pile
   .discard-pile {
+    // Button reset
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    outline: none;
+
     position: relative;
     cursor: pointer;
     transition: transform vars.$transition-fast;
 
-    &:hover {
+    &:hover:not(:disabled) {
       transform: translateY(-5px);
 
       .discard-top-card,
@@ -29,10 +36,28 @@
         transition: filter vars.$transition-medium;
       }
     }
+
+    &:focus-visible {
+      outline: 3px solid vars.$color-yellow;
+      outline-offset: 4px;
+      border-radius: vars.$border-radius-sm;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   }
 
   // Main Deck
   .deck {
+    // Button reset
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    outline: none;
+
     position: relative;
     cursor: pointer;
     transition: transform vars.$transition-fast;
@@ -41,7 +66,7 @@
       filter: vars.$shadow-dark-blue;
     }
 
-    &:hover:not(.deck-empty) {
+    &:hover:not(:disabled):not(.deck-empty) {
       transform: translateY(-10px);
 
       .card-back {
@@ -50,10 +75,17 @@
       }
     }
 
-    &:active:not(.deck-empty) {
+    &:active:not(:disabled):not(.deck-empty) {
       transform: translateY(-5px);
     }
 
+    &:focus-visible {
+      outline: 3px solid vars.$color-yellow;
+      outline-offset: 4px;
+      border-radius: vars.$border-radius-sm;
+    }
+
+    &:disabled,
     &.deck-empty {
       cursor: not-allowed;
       opacity: 0.6;

@@ -1,6 +1,14 @@
 <!-- Discard Pile Overlay -->
 @if (show()) {
-<div class="discard-overlay" (click)="handleClose($event)">
+<div
+  #overlayContainer
+  class="discard-overlay"
+  (click)="handleClose($event)"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Discard pile viewer"
+  tabindex="-1"
+>
   <div
     class="fanned-cards"
     [style.--total-cards]="cards().length"

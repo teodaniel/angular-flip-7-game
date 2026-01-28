@@ -1,34 +1,60 @@
 <!-- Central Section: Card Deck -->
 <section class="deck-section">
   <!-- Discard Pile -->
-  <div class="discard-pile" (click)="handleViewDiscardPile()">
+  <button
+    type="button"
+    class="discard-pile"
+    (click)="handleViewDiscardPile()"
+    [disabled]="discardPile().length === 0"
+    [attr.aria-label]="
+      discardPile().length === 0
+        ? 'Discard pile is empty'
+        : 'View discard pile, ' + discardPile().length + ' card' + (discardPile().length === 1 ? '' : 's')
+    "
+  >
     @if (discardPile().length === 0) {
-    <img src="images/discard-placeholder.svg" alt="Empty discard pile" class="discard-empty" />
+    <img src="images/discard-placeholder.svg" alt="" class="discard-empty" />
     } @else {
-    <img
-      [src]="discardPile()[0].imageUrl"
-      alt="Bottom discard card"
-      class="discard-top-card"
-    />
+    <img [src]="discardPile()[0].imageUrl" alt="" class="discard-top-card" />
     }
-    <div class="discard-label">DISCARD PILE</div>
-  </div>
+    <div class="discard-label" aria-hidden="true">DISCARD PILE</div>
+  </button>
 
   <!-- Main Deck -->
-  <div class="deck" [class.deck-empty]="deckCount() === 0" (click)="handleDrawCard()">
+  <button
+    type="button"
+    class="deck"
+    [class.deck-empty]="deckCount() === 0"
+    (click)="handleDrawCard()"
+    [disabled]="!canDrawCard()"
+    [attr.aria-label]="
+      deckCount() === 0
+        ? 'Deck is empty'
+        : canDrawCard()
+        ? 'Draw a card from the deck, ' + deckCount() + ' card' + (deckCount() === 1 ? '' : 's') + ' remaining'
+        : 'Cannot draw card'
+    "
+  >
     @if (deckCount() > 0) {
-    <img src="images/card-back.svg" alt="Card deck" class="card-back" />
+    <img src="images/card-back.svg" alt="" class="card-back" />
     } @else {
-    <img src="images/empty-slot.svg" alt="Empty deck" class="card-back" />
+    <img src="images/empty-slot.svg" alt="" class="card-back" />
     }
-    <div class="deck-label">{{ deckCount() > 0 ? 'Click to Draw' : 'Empty' }}</div>
-  </div>
+    <div class="deck-label" aria-hidden="true">
+      {{ deckCount() > 0 ? 'Click to Draw' : 'Empty' }}
+    </div>
+  </button>
 
   <!-- End Turn Button -->
   <button
     class="end-turn-btn"
     (click)="handleEndTurn()"
     [disabled]="!isTurnActive() || !hasDrawnCards()"
+    [attr.aria-label]="
+      !isTurnActive() || !hasDrawnCards()
+        ? 'End turn button disabled'
+        : 'End turn and score your points'
+    "
   >
     <div class="btn-content">END TURN</div>
   </button>
