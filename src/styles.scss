@@ -12,11 +12,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
+  line-height: 1.5;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: radial-gradient(circle at center,
-    #faf8f5 0%,      /* Pale white center */
-    #f5f1e8 50%,     /* Light cream */
-    #ebe5d9 100%     /* Outer cream */
+    #f8f4e0 0%,      /* Paler yellow center */
+    #f0e7c3 100%     /* Pale yellow outer */
   );
   background-attachment: fixed;
 }

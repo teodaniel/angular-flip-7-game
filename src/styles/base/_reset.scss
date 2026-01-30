@@ -5,8 +5,7 @@
 @use '../abstracts/variables' as vars;
 
 main {
-  padding: vars.$spacing-md;
-  max-width: 1400px;
+  width: 100%;
   margin: 0;
   padding: 40px;
   border: 0;
@@ -18,8 +17,9 @@ main {
   text-size-adjust: none;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 100px);
-  background: radial-gradient(circle, vars.$color-paler-yellow, vars.$color-pale-yellow);
+  flex: 1;
+  overflow-y: auto;
+  background: transparent;
 }
 
 *,
@@ -125,6 +125,7 @@ table {
 
 input {
   -webkit-appearance: none;
+  appearance: none;
   border-radius: 0;
 }
 
@@ -140,28 +141,4 @@ input {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
-}
-
-// Skip navigation link
-// Hidden until focused with keyboard, allows users to bypass header
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  z-index: 10000;
-  padding: vars.$spacing-sm vars.$spacing-md;
-  background: vars.$color-dark-blue;
-  color: vars.$color-yellow;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-  border: vars.$border-medium solid vars.$color-yellow;
-  border-radius: vars.$border-radius-sm;
-  transition: top vars.$transition-fast;
-
-  &:focus {
-    top: vars.$spacing-sm;
-    outline: 3px solid vars.$color-yellow;
-    outline-offset: 2px;
-  }
 }
