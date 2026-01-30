@@ -318,7 +318,7 @@ The SSR server ([src/server.ts](src/server.ts)):
   - Shadow presets: Standard shadows plus themed glows (`$shadow-glow-dark-blue`, `$shadow-hover-dark-blue`)
   - Card dimensions: `$card-width-deck`, `$card-height-deck`, `$card-width-hand`, `$card-height-hand`
   - Transitions: `$transition-fast`, `$transition-medium`, `$transition-slow`
-- **Background**: Radial gradient from outer cream to center pale white (defined in [src/styles.scss](src/styles.scss))
+- **Background**: Radial gradient yellowish background (paler yellow to pale yellow) applied to body element (defined in [src/styles.scss](src/styles.scss))
 - **Primary colors**: Dark blue (#1e3a5f), yellow (#ffee00), dark red (#8b0000)
 - **Header**: Pale white background with triple border system using box-shadow layering
 - **"FLIP 7" text**: Yellow with multi-layer text-shadow effect simulating SVG tspan strokes (dark blue → dark red → dark blue)
