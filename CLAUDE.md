@@ -327,6 +327,62 @@ The SSR server ([src/server.ts](src/server.ts)):
 - **Interactive hover effects**: Dark blue shadows with smooth 0.3s transitions, offset 4px right and 5px down
 - **Retro text mixin**: `@mixin retro-text()` in `abstracts/_mixins.scss` for bold outlined typography using `-webkit-text-stroke` and `paint-order`
 
+**Style-Related Fixes - IMPORTANT Guidelines:**
+
+When addressing CSS/SCSS layout, positioning, or styling issues, ALWAYS follow this process:
+
+1. **Provide Multiple Options** (2-4 different approaches)
+   - Present at least 2-3 alternative solutions to the problem
+   - Rank them by preference (e.g., "Option 1 (Recommended)", "Option 2", "Option 3")
+   - Each option should be a fundamentally different approach, not just minor variations
+
+2. **Explain Each Option in Detail**
+   - **What it does**: Clearly describe what CSS properties/changes will be made
+   - **Why it works**: Explain the technical reason this solves the problem (e.g., "Flexbox uses available space algorithm...", "Grid creates explicit row sizing...")
+   - **How it works**: Break down the mechanism (e.g., "When flex: 1 is set, the element asks its parent for available space...")
+   - **Trade-offs**: Mention any potential drawbacks or side effects
+   - **When to use**: Describe scenarios where this approach is most appropriate
+
+3. **Root Cause Analysis**
+   - Always identify and explain the root cause of the styling issue
+   - Use visual diagrams or chain explanations when helpful (e.g., "html (no height) → body (100vh) → main (flex: 1)")
+   - Explain what the browser is actually computing vs. what we expect
+
+4. **Examples of Good Explanations**
+
+   **Good Example:**
+
+   ```text
+   Option 1: Move background to body (Recommended)
+
+   What it does: Move the yellowish gradient from main to body, make main's background transparent
+
+   Why it works: The body element naturally fills the viewport height, so any background on it will extend to the bottom. Main's flex: 1 makes it take available space, but its background is limited to its content height.
+
+   How it works: When you set a background on body, it becomes the page's root background and automatically covers the entire viewport, regardless of content height. This is different from a child element's background which only covers its content box.
+
+   Trade-offs: None - this is the cleanest approach.
+   ```
+
+   **Bad Example:**
+
+   ```text
+   Try adding height: 100% to html.
+   ```
+
+5. **Common Styling Issues to Watch For**
+   - Flexbox height calculation problems (missing height chain)
+   - Absolute vs. relative positioning conflicts
+   - Overflow and scrollbar issues
+   - Background not extending to viewport edges
+   - Z-index stacking context issues
+   - CSS specificity conflicts
+
+6. **Before Implementing**
+   - Let the user choose which option they prefer
+   - Only proceed with implementation after user approval
+   - If user says "revert", be prepared to undo changes completely
+
 **Layout:**
 
 - Responsive design with 768px breakpoint
