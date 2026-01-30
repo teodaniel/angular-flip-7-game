@@ -1,6 +1,7 @@
 import { Component, input, output, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../models/card.model';
+import { DOM_SELECTORS } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-deck-section',
@@ -30,9 +31,9 @@ export class DeckSection {
     // Don't trigger if user is typing in an input/textarea or if modal is open
     const target = keyEvent.target as HTMLElement;
     if (
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      document.querySelector('[role="dialog"]')
+      target.tagName === DOM_SELECTORS.INPUT_TAG ||
+      target.tagName === DOM_SELECTORS.TEXTAREA_TAG ||
+      document.querySelector(DOM_SELECTORS.MODAL_DIALOG)
     ) {
       return;
     }
@@ -51,9 +52,9 @@ export class DeckSection {
     // Don't trigger if user is typing in an input/textarea or if modal is open
     const target = keyEvent.target as HTMLElement;
     if (
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      document.querySelector('[role="dialog"]')
+      target.tagName === DOM_SELECTORS.INPUT_TAG ||
+      target.tagName === DOM_SELECTORS.TEXTAREA_TAG ||
+      document.querySelector(DOM_SELECTORS.MODAL_DIALOG)
     ) {
       return;
     }

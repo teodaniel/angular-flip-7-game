@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Card, CardType } from '../models/card.model';
+import { CARD_DISPLAY_VALUES, IMAGE_PATHS } from '../constants/app.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -19,32 +20,39 @@ export class CardDeckService {
     // Number cards
     for (let value = 12; value >= 1; value--) {
       for (let count = 0; count < value; count++) {
-        cards.push(this.createCard(CardType.NUMBER, value, `images/cards/card-${value}.svg`));
+        cards.push(this.createCard(CardType.NUMBER, value, IMAGE_PATHS.getCardPath(`card-${value}.svg`)));
       }
     }
 
     // Add single 0 card
-    cards.push(this.createCard(CardType.NUMBER, 0, 'images/cards/card-0.svg'));
+    cards.push(this.createCard(CardType.NUMBER, 0, IMAGE_PATHS.getCardPath('card-0.svg')));
 
     // Addition cards
-    [2, 4, 6, 8, 10].forEach((value) => {
+    const additionCards = [
+      { value: 2, displayValue: CARD_DISPLAY_VALUES.ADDITION.PLUS_2 },
+      { value: 4, displayValue: CARD_DISPLAY_VALUES.ADDITION.PLUS_4 },
+      { value: 6, displayValue: CARD_DISPLAY_VALUES.ADDITION.PLUS_6 },
+      { value: 8, displayValue: CARD_DISPLAY_VALUES.ADDITION.PLUS_8 },
+      { value: 10, displayValue: CARD_DISPLAY_VALUES.ADDITION.PLUS_10 },
+    ];
+    additionCards.forEach(({ value, displayValue }) => {
       cards.push(
-        this.createCard(CardType.ADDITION, value, `images/cards/card-plus${value}.svg`, `+${value}`)
+        this.createCard(CardType.ADDITION, value, IMAGE_PATHS.getCardPath(`card-plus${value}.svg`), displayValue)
       );
     });
 
     // Multiplier card
-    cards.push(this.createCard(CardType.MULTIPLIER, 2, 'images/cards/card-x2.svg', 'x2'));
+    cards.push(this.createCard(CardType.MULTIPLIER, 2, IMAGE_PATHS.getCardPath('card-x2.svg'), CARD_DISPLAY_VALUES.MULTIPLIER));
 
     // Special action cards - FREEZE (3x)
     for (let i = 0; i < 3; i++) {
-      cards.push(this.createCard(CardType.FREEZE, 0, 'images/cards/card-freeze.svg', 'FREEZE'));
+      cards.push(this.createCard(CardType.FREEZE, 0, IMAGE_PATHS.getCardPath('card-freeze.svg'), CARD_DISPLAY_VALUES.FREEZE));
     }
 
     // FLIP THREE (3x)
     for (let i = 0; i < 3; i++) {
       cards.push(
-        this.createCard(CardType.FLIP_THREE, 0, 'images/cards/card-flip-three.svg', 'FLIP THREE')
+        this.createCard(CardType.FLIP_THREE, 0, IMAGE_PATHS.getCardPath('card-flip-three.svg'), CARD_DISPLAY_VALUES.FLIP_THREE)
       );
     }
 
@@ -54,8 +62,8 @@ export class CardDeckService {
         this.createCard(
           CardType.SECOND_CHANCE,
           0,
-          'images/cards/card-second-chance.svg',
-          'SECOND CHANCE'
+          IMAGE_PATHS.getCardPath('card-second-chance.svg'),
+          CARD_DISPLAY_VALUES.SECOND_CHANCE
         )
       );
     }

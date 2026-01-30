@@ -80,40 +80,7 @@ The application has been enhanced to meet **WCAG 2.1 Level AA** standards across
 
 ---
 
-#### 3. ✅ Skip Navigation Links
-**WCAG:** 2.4.1 Bypass Blocks (Level A)
-
-- Skip link at top of page allows keyboard users to bypass header
-- Link is visually hidden until focused
-- Smooth transition when focused
-
-**Files modified:**
-- [src/app/app.html](src/app/app.html)
-- [src/styles/base/_reset.scss](src/styles/base/_reset.scss)
-
-**Implementation:**
-```html
-<a href="#main-content" class="skip-link">Skip to main content</a>
-<main id="main-content">...</main>
-```
-
-**Styling:**
-```scss
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  z-index: 10000;
-
-  &:focus {
-    top: vars.$spacing-sm;
-  }
-}
-```
-
----
-
-#### 4. ✅ ARIA Roles on Modals
+#### 3. ✅ ARIA Roles on Modals
 **WCAG:** 4.1.2 Name, Role, Value (Level A)
 
 - All modals have `role="dialog"` and `aria-modal="true"`
@@ -139,7 +106,7 @@ The application has been enhanced to meet **WCAG 2.1 Level AA** standards across
 
 ### Phase 2: Enhanced (WCAG Level AA)
 
-#### 5. ✅ Focus Management
+#### 4. ✅ Focus Management
 **WCAG:** 2.4.3 Focus Order (Level A), 2.1.2 No Keyboard Trap (Level A)
 
 **Features:**
@@ -185,7 +152,7 @@ protected handleTab(event: Event): void {
 
 ---
 
-#### 6. ✅ ARIA Live Regions
+#### 5. ✅ ARIA Live Regions
 **WCAG:** 4.1.3 Status Messages (Level AA)
 
 **Implementation:**
@@ -239,7 +206,7 @@ protected handleTab(event: Event): void {
 
 ---
 
-#### 7. ✅ Color Contrast
+#### 6. ✅ Color Contrast
 **WCAG:** 1.4.3 Contrast (Minimum) (Level AA)
 
 All text meets WCAG AA contrast requirements:
@@ -339,7 +306,7 @@ Accessibility features tested in:
 
 ---
 
-#### 8. ✅ Keyboard Shortcuts
+#### 7. ✅ Keyboard Shortcuts
 **Enhancement - Improves Usability**
 
 Custom keyboard shortcuts for common game actions:

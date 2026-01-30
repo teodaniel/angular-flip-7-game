@@ -10,6 +10,7 @@ import { TopSection } from './components/top-section/top-section';
 import { DeckSection } from './components/deck-section/deck-section';
 import { DrawnCards } from './components/drawn-cards/drawn-cards';
 import { DiscardOverlay } from './components/discard-overlay/discard-overlay';
+import { TIMING_CONFIG, GAME_CONFIG, PLAYER_CONFIG } from './constants/app.constants';
 
 export interface Player {
   name: string;
@@ -36,19 +37,19 @@ export class App {
   private readonly gameLogic = inject(GameLogicService);
 
   protected readonly players = signal<Player[]>([
-    { name: 'Player 1', totalScore: 0 },
-    { name: 'Player 2', totalScore: 0 },
-    { name: 'Player 3', totalScore: 0 },
+    { name: PLAYER_CONFIG.getDefaultName(0), totalScore: 0 },
+    { name: PLAYER_CONFIG.getDefaultName(1), totalScore: 0 },
+    { name: PLAYER_CONFIG.getDefaultName(2), totalScore: 0 },
   ]);
 
   protected readonly currentPlayerIndex = signal(0);
   protected readonly currentRoundScore = signal(0);
   protected readonly drawnCards = signal<Card[]>([]);
   protected readonly discardPile = signal<Card[]>([]);
-  protected readonly deckCount = signal(94);
+  protected readonly deckCount = signal<number>(GAME_CONFIG.DECK_SIZE);
   protected readonly isTurnActive = signal(true);
   protected readonly hasBusted = signal(false);
-  protected readonly maxHandSize = 7;
+  protected readonly maxHandSize = GAME_CONFIG.MAX_HAND_SIZE;
   protected readonly isFlippingThree = signal(false);
   protected readonly flipThreeCount = signal(0);
 
@@ -56,8 +57,8 @@ export class App {
   protected readonly showStartModal = signal(true);
   protected readonly showEndModal = signal(false);
   protected readonly winner = signal<Player | null>(null);
-  protected readonly minPlayers = 3;
-  protected readonly maxPlayers = 18;
+  protected readonly minPlayers = GAME_CONFIG.MIN_PLAYERS;
+  protected readonly maxPlayers = GAME_CONFIG.MAX_PLAYERS;
 
   // Discard overlay state
   protected readonly showDiscardOverlay = signal(false);
@@ -123,7 +124,7 @@ export class App {
         this.discardPile.set([]);
         this.deckCount.set(this.cardDeckService.getRemainingCount());
         this.showDeckEmptyPopup.set(false);
-      }, 1500);
+      }, TIMING_CONFIG.POPUP_SHORT_DURATION_MS);
     }
 
     if (!card) {
@@ -148,7 +149,7 @@ export class App {
         this.showSecondChancePopup.set(true);
         setTimeout(() => {
           this.showSecondChancePopup.set(false);
-        }, 2000);
+        }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
 
         return;
       } else {
@@ -186,7 +187,7 @@ export class App {
       this.showFlipThreePopup.set(true);
       setTimeout(() => {
         this.showFlipThreePopup.set(false);
-      }, 1500);
+      }, TIMING_CONFIG.POPUP_SHORT_DURATION_MS);
 
       this.autoFlipThree();
     }
@@ -201,7 +202,7 @@ export class App {
       setTimeout(() => {
         this.showBonusPopup.set(false);
         this.showNextPlayerAndEndTurn();
-      }, 2000);
+      }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
     }
   }
 
@@ -229,7 +230,7 @@ export class App {
               this.discardPile.set([]);
               this.deckCount.set(this.cardDeckService.getRemainingCount());
               this.showDeckEmptyPopup.set(false);
-            }, 1500);
+            }, TIMING_CONFIG.POPUP_SHORT_DURATION_MS);
           }
 
           if (!card) {
@@ -253,7 +254,7 @@ export class App {
               this.showSecondChancePopup.set(true);
               setTimeout(() => {
                 this.showSecondChancePopup.set(false);
-              }, 2000);
+              }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
             } else {
               const newCards = [...this.drawnCards(), card];
               this.drawnCards.set(newCards);
@@ -277,13 +278,13 @@ export class App {
             // Check if this card is also FLIP THREE - add 3 more iterations
             if (card.type === CardType.FLIP_THREE) {
               const currentIteration = i + 1;
-              const nextDelay = baseDelay + (currentIteration + 1) * 500;
+              const nextDelay = baseDelay + (currentIteration + 1) * TIMING_CONFIG.AUTO_FLIP_STAGGER_DELAY_MS;
 
               // Show flip three popup for nested FLIP THREE
               this.showFlipThreePopup.set(true);
               setTimeout(() => {
                 this.showFlipThreePopup.set(false);
-              }, 1500);
+              }, TIMING_CONFIG.POPUP_SHORT_DURATION_MS);
 
               // Schedule 3 more cards after the current sequence
               this.autoFlipThree(3, nextDelay);
@@ -311,7 +312,7 @@ export class App {
               setTimeout(() => {
                 this.showBonusPopup.set(false);
                 this.showNextPlayerAndEndTurn();
-              }, 2000);
+              }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
               return;
             }
           }
@@ -328,7 +329,7 @@ export class App {
           this.isFlippingThree.set(false);
           this.flipThreeCount.set(0);
         }
-      }, baseDelay + (i + 1) * 500); // Stagger each draw by 500ms (500ms, 1000ms, 1500ms)
+      }, baseDelay + (i + 1) * TIMING_CONFIG.AUTO_FLIP_STAGGER_DELAY_MS); // Stagger each draw by 500ms (500ms, 1000ms, 1500ms)
     }
   }
 
@@ -345,7 +346,7 @@ export class App {
     setTimeout(() => {
       this.showNextPlayerPopup.set(false);
       this.finalizeTurnEnd();
-    }, 2000);
+    }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
   }
 
   private finalizeTurnEnd(): void {
@@ -373,7 +374,7 @@ export class App {
     this.currentPlayerIndex.set(nextPlayerIndex);
 
     // Check for winner (200+ points)
-    if (updatedPlayers.some((p) => p.totalScore >= 200)) {
+    if (updatedPlayers.some((p) => p.totalScore >= GAME_CONFIG.WINNING_SCORE)) {
       const winningPlayer = updatedPlayers.reduce((prev, current) =>
         prev.totalScore > current.totalScore ? prev : current
       );
@@ -384,8 +385,8 @@ export class App {
   }
 
   protected handleAddPlayer(playerName: string): void {
-    const playerNumber = this.players().length + 1;
-    const name = playerName.trim() || `Player ${playerNumber}`;
+    const playerIndex = this.players().length;
+    const name = playerName.trim() || PLAYER_CONFIG.getDefaultName(playerIndex);
     this.players.set([...this.players(), { name, totalScore: 0 }]);
   }
 
@@ -396,7 +397,7 @@ export class App {
 
   protected handleUpdatePlayerName(event: { index: number; name: string }): void {
     const updatedPlayers = this.players().map((p, i) =>
-      i === event.index ? { ...p, name: event.name.trim() || `Player ${event.index + 1}` } : p
+      i === event.index ? { ...p, name: event.name.trim() || PLAYER_CONFIG.getDefaultName(event.index) } : p
     );
     this.players.set(updatedPlayers);
   }
@@ -466,6 +467,6 @@ export class App {
     setTimeout(() => {
       popupSignal.set(false);
       this.showNextPlayerAndEndTurn();
-    }, 2000);
+    }, TIMING_CONFIG.POPUP_DISPLAY_DURATION_MS);
   }
 }

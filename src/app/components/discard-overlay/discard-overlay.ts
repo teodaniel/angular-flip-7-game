@@ -11,6 +11,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../models/card.model';
+import {
+  DOM_SELECTORS,
+  RESPONSIVE_BREAKPOINTS,
+  DISCARD_OVERLAY_CONFIG,
+  TIMING_CONFIG,
+} from '../../constants/app.constants';
 
 @Component({
   selector: 'app-discard-overlay',
@@ -45,7 +51,7 @@ export class DiscardOverlay {
           if (overlay) {
             overlay.focus();
           }
-        }, 0);
+        }, TIMING_CONFIG.FOCUS_DELAY_MS);
 
         // Start listening to mouse movement with RAF throttling
         this.mouseMoveListener = (e: MouseEvent) => {
@@ -85,7 +91,7 @@ export class DiscardOverlay {
   protected handleClose(event: MouseEvent): void {
     // Close if clicking on the overlay background
     const target = event.target as HTMLElement;
-    if (target.classList.contains('discard-overlay')) {
+    if (target.classList.contains(DOM_SELECTORS.DISCARD_OVERLAY_CLASS)) {
       this.close.emit();
     }
   }
@@ -100,8 +106,8 @@ export class DiscardOverlay {
     const distanceY = mousePos.y - cardCenterY;
     const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
-    // Define max distance for effect (200px)
-    const maxDistance = 200;
+    // Use configured max distance for effect
+    const maxDistance = DISCARD_OVERLAY_CONFIG.MAX_PROXIMITY_DISTANCE;
     // Calculate proximity: 1 when mouse is on card, 0 when far away
     const proximity = Math.max(0, 1 - distance / maxDistance);
 
@@ -111,12 +117,15 @@ export class DiscardOverlay {
   // Calculate cards per row based on viewport width
   protected getCardsPerRow(): number {
     const width = window.innerWidth;
-    if (width >= 1400) return 25;
-    if (width >= 1200) return 20;
-    if (width >= 992) return 16;
-    if (width >= 768) return 12;
-    if (width >= 480) return 8;
-    return 6;
+    if (width >= RESPONSIVE_BREAKPOINTS.EXTRA_LARGE.width)
+      return RESPONSIVE_BREAKPOINTS.EXTRA_LARGE.cardsPerRow;
+    if (width >= RESPONSIVE_BREAKPOINTS.LARGE.width) return RESPONSIVE_BREAKPOINTS.LARGE.cardsPerRow;
+    if (width >= RESPONSIVE_BREAKPOINTS.MEDIUM.width)
+      return RESPONSIVE_BREAKPOINTS.MEDIUM.cardsPerRow;
+    if (width >= RESPONSIVE_BREAKPOINTS.TABLET.width)
+      return RESPONSIVE_BREAKPOINTS.TABLET.cardsPerRow;
+    if (width >= RESPONSIVE_BREAKPOINTS.MOBILE.width) return RESPONSIVE_BREAKPOINTS.MOBILE.cardsPerRow;
+    return RESPONSIVE_BREAKPOINTS.SMALL_MOBILE.cardsPerRow;
   }
 
   // Calculate row index for a card
