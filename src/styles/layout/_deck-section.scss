@@ -23,7 +23,9 @@
     font: inherit;
     outline: none;
 
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     cursor: pointer;
     transition: transform vars.$transition-fast;
 
@@ -58,7 +60,9 @@
     font: inherit;
     outline: none;
 
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     cursor: pointer;
     transition: transform vars.$transition-fast;
 
